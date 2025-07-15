@@ -1,0 +1,54 @@
+{
+  "name": "adstream",
+  "version": "1.0.10",
+  "description": "Add a stream of ads with Add-Stream.",
+  "keywords": [
+    "react",
+    "ads",
+    "iframe",
+    "mui",
+    "component",
+    "emotion",
+    "ad-stream",
+    "add-stream"
+  ],
+  "license": "MIT",
+  "author": "Add-stream <add6stream@gmail.com>",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./browser": {
+      "default": "./dist/browser/web-component.global.js"
+    }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "dist/browser"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@mui/material": "^5.0.0",
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0",
+    "react-slick": "^0.30.3",
+    "react-to-webcomponent": "^2.0.1",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/react-slick": "^0.23.13",
+    "tsup": "^8.5.0",
+    "typescript": "^5.0.0"
+  },
+  "module": "dist/index.mjs"
+}
