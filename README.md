@@ -19,7 +19,7 @@ yarn add adstream
 
 ## 📦 Usage
 
-<!-- ### Carousel (Multiple Ads)
+### Carousel (Multiple Ads)
 
 ```tsx
 import React from "react";
@@ -34,7 +34,7 @@ function App() {
 }
 
 export default App;
-``` -->
+```
 
 ### Single Ad with Zone ID
 
@@ -88,7 +88,7 @@ export default App;
 
 ## 🎛️ Customization
 
-<!-- ### AdStreamCarousel Props
+### AdStreamCarousel Props
 
 | Prop               | Type                                      | Description                                                                                                                                                                                                                     |
 | ------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -96,7 +96,7 @@ export default App;
 | `sx`               | `SxProps<Theme>`                          | MUI style overrides for the carousel wrapper                                                                                                                                                                                    |
 | `slotProps.ad`     | `Partial<AdStreamProps>`                  | Custom styling and behavior for ads. **Defaults:** `{ aspectRatio: "600 / 336", height: { xs: 200, sm: 225, md: 275, lg: 336 }, width: "100%", boxShadow: 1 }`                                                                  |
 | `slotProps.steps`  | `Partial<StepsProps>`                     | Custom styles for step indicators. **Defaults:** `{ bgColor: "rgba(0,0,0,0.125)", selectedColor: "primary.main", unselectedColor: "grey.500" }`                                                                                 |
-| `slotProps.slider` | `Partial<import('react-slick').Settings>` | Props to customize the `react-slick` slider. **Defaults:** `{ initialSlide: 0, autoplay: true, autoplaySpeed: 5000, arrows: false, infinite: true, pauseOnHover: true, swipe: true, draggable: true, lazyLoad: "anticipated" }` | -->
+| `slotProps.slider` | `Partial<import('react-slick').Settings>` | Props to customize the `react-slick` slider. **Defaults:** `{ initialSlide: 0, autoplay: true, autoplaySpeed: 5000, arrows: false, infinite: true, pauseOnHover: true, swipe: true, draggable: true, lazyLoad: "anticipated" }` |
 
 ### AdStream Props
 
