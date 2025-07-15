@@ -1,7 +1,7 @@
 {
   "name": "adstream",
-  "version": "1.0.10",
-  "description": "Add a stream of ads with Add-Stream.",
+  "version": "1.0.11",
+  "description": "Add a stream of ads with Add‑Stream.",
   "keywords": [
     "react",
     "ads",
@@ -13,35 +13,43 @@
     "add-stream"
   ],
   "license": "MIT",
-  "author": "Add-stream <add6stream@gmail.com>",
-  "type": "commonjs",
+  "author": "Add‑stream <add6stream@gmail.com>",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "sideEffects": [
+    "./src/web-component.tsx"
+  ],
+  "files": [
+    "dist",
+    "dist/browser"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
-    "./browser": {
+    "./web-component": {
+      "import": "./dist/browser/web-component.global.js",
       "default": "./dist/browser/web-component.global.js"
     }
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "dist/browser"
-  ],
-  "scripts": {
-    "build": "tsup"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.0.0",
-    "@emotion/styled": "^11.0.0",
-    "@mui/material": "^5.0.0",
+  "peerDependencies": {
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
+    "@mui/material": "^5.0.0",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0"
+  },
+  "dependencies": {
     "react-slick": "^0.30.3",
-    "react-to-webcomponent": "^2.0.1",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "react-to-webcomponent": "^2.0.1"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
@@ -49,6 +57,5 @@
     "@types/react-slick": "^0.23.13",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0"
-  },
-  "module": "dist/index.mjs"
+  }
 }
