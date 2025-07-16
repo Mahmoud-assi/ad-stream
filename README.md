@@ -76,8 +76,15 @@ function App() {
           },
         }}
         slots={{
-          nextArrow: <button>Next →</button>,
-          prevArrow: <button>← Prev</button>,
+          slots: {
+          // Optionally override dots or navigation with custom React nodes
+          dots: (
+            <div style={{ textAlign: "center", marginTop: 10 }}>
+              Custom Dots Here
+            </div>
+          ),
+          // navigation: <CustomNavigationComponent />,
+    },
         }}
         sliderOptions={{
           loop: true,

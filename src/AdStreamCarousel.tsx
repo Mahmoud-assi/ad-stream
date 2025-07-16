@@ -4,7 +4,7 @@ import { Box, Skeleton, Stack } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
 import type { KeenSliderOptions } from "keen-slider";
-import "keen-slider/keen-slider.min.css";
+// import "keen-slider/keen-slider.min.css";
 
 // Component Props Interface
 export interface AdStreamCarouselProps {
