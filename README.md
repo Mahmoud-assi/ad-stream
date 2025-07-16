@@ -54,7 +54,6 @@ export default App;
 ```tsx
 import React from "react";
 import { AdStream } from "adstream";
-import { CircularProgress, Box } from "@mui/material";
 
 function App() {
   return (
@@ -63,20 +62,7 @@ function App() {
       height={{ xs: 200, md: 300 }}
       boxShadow={3}
       aspectRatio="16 / 9"
-      loader={
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 200,
-            backgroundColor: "#f0f0f0",
-            borderRadius: 2,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      }
+      loader={<div>Loading...<div/>}
     />
   );
 }
@@ -90,13 +76,14 @@ export default App;
 
 ### AdStreamCarousel Props
 
-| Prop               | Type                                      | Description                                                                                                                                                                                                                     |
-| ------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `zoneIds`          | `number[]`                                | List of ad zone IDs                                                                                                                                                                                                             |
-| `sx`               | `SxProps<Theme>`                          | MUI style overrides for the carousel wrapper                                                                                                                                                                                    |
-| `slotProps.ad`     | `Partial<AdStreamProps>`                  | Custom styling and behavior for ads. **Defaults:** `{ aspectRatio: "600 / 336", height: { xs: 200, sm: 225, md: 275, lg: 336 }, width: "100%", boxShadow: 1 }`                                                                  |
-| `slotProps.steps`  | `Partial<StepsProps>`                     | Custom styles for step indicators. **Defaults:** `{ bgColor: "rgba(0,0,0,0.125)", selectedColor: "primary.main", unselectedColor: "grey.500" }`                                                                                 |
-| `slotProps.slider` | `Partial<import('react-slick').Settings>` | Props to customize the `react-slick` slider. **Defaults:** `{ initialSlide: 0, autoplay: true, autoplaySpeed: 5000, arrows: false, infinite: true, pauseOnHover: true, swipe: true, draggable: true, lazyLoad: "anticipated" }` |
+| Prop                                  | Type                        | Description                                                                                    |
+| ------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
+| `zoneIds`                             | `number[]`                  | List of ad zone IDs                                                                            |
+| `slotProps.ad`                        | `Partial<AdComponentProps>` | Customize individual ads inside the carousel (e.g. `height`, `aspectRatio`, `boxShadow`, etc.) |
+| `slotProps.navigation.arrowColor`     | `string`                    | Override left/right arrow color                                                                |
+| `slotProps.navigation.dotColor`       | `string`                    | Inactive pagination dot color                                                                  |
+| `slotProps.navigation.dotActiveColor` | `string`                    | Active pagination dot color                                                                    |
+| `sliderOptions`                       | `KeenSliderOptions`         | Override Keen Slider behavior (e.g. `loop`, `slides.perView`, `spacing`, etc.)                 |
 
 ### AdStream Props
 

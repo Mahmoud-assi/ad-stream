@@ -1,208 +1,213 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Stack, Skeleton, type SxProps, type Theme } from "@mui/material";
-import Slider, { type Settings } from "react-slick";
+import { useState } from "react";
+import { useKeenSlider } from "keen-slider/react";
+import { Box, Skeleton, Stack } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Steps, { type StepsProps } from "./Steps";
+import useAdStream from "./useAdStream";
+import type { KeenSliderOptions } from "keen-slider";
+import "keen-slider/keen-slider.min.css";
 
-/**
- * Props for the AdStreamCarousel component.
- */
+// Component Props Interface
 export interface AdStreamCarouselProps {
   /**
-   * Array of zone IDs for which ads should be fetched.
+   * Array of Ad zone IDs to fetch ads for
    */
   zoneIds: number[];
 
   /**
-   * Optional custom styling for the carousel wrapper.
-   */
-  sx?: SxProps<Theme>;
-
-  /**
-   * Optional slotProps to customize sub-components like ads, step indicators, and slider.
+   * Props to customize inner components and styles
    */
   slotProps?: {
     /**
-     * Props for the internal <AdComponent /> used for each ad.
-     * Defaults:
-     * {
-     *   aspectRatio: "600 / 336",
-     *   height: { xs: 200, sm: 225, md: 275, lg: 336 },
-     *   width: "100%",
-     *   boxShadow: 1
-     * }
+     * Props passed to <AdStream />
      */
-    ad?: Omit<AdComponentProps, "htmlContent">;
+    ad?: Partial<AdComponentProps>;
 
     /**
-     * Props for the <Steps /> indicator component.
-     * Defaults:
-     * {
-     *   bgColor: "rgba(0,0,0,0.125)",
-     *   selectedColor: "primary.main",
-     *   unselectedColor: "grey.500"
-     * }
+     * Navigation color overrides
      */
-    steps?: Partial<Omit<StepsProps, "selectedStep" | "steps" | "onClick">>;
-
-    /**
-     * Props for the react-slick <Slider /> component.
-     * Defaults:
-     * {
-     *   initialSlide: 0,
-     *   autoplay: true,
-     *   autoplaySpeed: 5000,
-     *   arrows: false,
-     *   infinite: true,
-     *   pauseOnHover: true,
-     *   swipe: true,
-     *   draggable: true,
-     *   lazyLoad: "anticipated"
-     * }
-     */
-    slider?: Partial<Settings>;
+    navigation?: {
+      arrowColor?: string;
+      dotColor?: string;
+      dotActiveColor?: string;
+    };
   };
+
+  /**
+   * Keen Slider configuration override
+   */
+  sliderOptions?: KeenSliderOptions;
 }
 
-/**
- * A carousel that displays multiple ads retrieved from a remote server.
- */
+//  Default values
+const defaultAdProps: Partial<AdComponentProps> = {
+  aspectRatio: "600 / 336",
+  height: { xs: 200, sm: 225, md: 275, lg: 336 },
+  width: "100%",
+  boxShadow: 1,
+};
+
+const defaultNavColors = {
+  arrowColor: "rgba(0, 0, 0, 0.6)",
+  dotColor: "rgba(0, 0, 0, 0.3)",
+  dotActiveColor: "primary.main",
+};
+
+const defaultSliderOptions: KeenSliderOptions = {
+  initial: 0,
+  loop: true,
+  slides: {
+    perView: 1,
+    spacing: 8,
+  },
+};
+
 const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   zoneIds,
-  sx,
   slotProps = {},
+  sliderOptions = {},
 }) => {
-  const { ad: adProps, steps: stepsProps, slider: sliderProps } = slotProps;
+  const { ad: adProps = {}, navigation = {} } = slotProps;
+  const mergedAdProps = { ...defaultAdProps, ...adProps };
+  const navColors = { ...defaultNavColors, ...navigation };
 
-  const [ads, setAds] = useState<(string | null)[]>([]);
-  const [selectedSlide, setSelectedSlide] = useState(0);
-  const slideRef = useRef<Slider | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    const fetchAds = async () => {
-      const results = await Promise.all(
-        zoneIds.map(async (zoneId) => {
-          try {
-            const res = await fetch(
-              `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
-                Math.random() * 999999
-              )}`
-            );
-            const data = await res.text();
-            const fullHTML = `
-              <html>
-                <head>
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                  <style>
-                    body { margin: 0; padding: 0; overflow: hidden; }
-                    img { width: 100%; height: 100%; object-fit: fill; }
-                  </style>
-                </head>
-                <body>${data}</body>
-              </html>
-            `;
-            return fullHTML;
-          } catch (e) {
-            console.error("Ad fetch error for zone:", zoneId, e);
-            return null;
-          }
-        })
-      );
-      setAds(results);
-    };
-
-    fetchAds();
-  }, [zoneIds]);
-
-  // Default slider settings merged with user-provided sliderProps
-  const defaultSliderSettings: Settings = {
-    initialSlide: 0,
-    autoplay: true,
-    autoplaySpeed: 5000, // 5 seconds
-    arrows: false,
-    infinite: true,
-    pauseOnHover: true,
-    swipe: true,
-    draggable: true,
-    lazyLoad: "anticipated",
-    beforeChange: (_: number, next: number) => setSelectedSlide(next),
+  const mergedSliderOptions: KeenSliderOptions = {
+    ...defaultSliderOptions,
+    ...sliderOptions,
+    slideChanged(slider) {
+      setCurrentSlide(slider.track.details.rel);
+      sliderOptions.slideChanged?.(slider);
+    },
+    created(slider) {
+      setLoaded(true);
+      sliderOptions?.created?.(slider);
+    },
   };
 
-  const sliderSettings = { ...defaultSliderSettings, ...sliderProps };
+  const { ads, loading } = useAdStream(zoneIds);
+  const [sliderRef, instanceRef] =
+    useKeenSlider<HTMLDivElement>(mergedSliderOptions);
 
   return (
-    <Box position="relative" sx={{ width: "100%", ...sx }}>
-      <Slider ref={slideRef} {...sliderSettings}>
-        {ads.length === 0
-          ? zoneIds.map((_, idx) => (
-              <Box key={idx}>
-                <Skeleton
-                  variant="rectangular"
-                  sx={{
-                    borderRadius: 2,
-                    minHeight: adProps?.height ?? {
-                      xs: 200,
-                      sm: 225,
-                      md: 275,
-                      lg: 336,
-                    },
-                    maxHeight: adProps?.height ?? {
-                      xs: 200,
-                      sm: 225,
-                      md: 275,
-                      lg: 336,
-                    },
-                    width: adProps?.width ?? "100%",
-                    boxShadow: adProps?.boxShadow ?? 1,
-                  }}
-                />
-              </Box>
-            ))
-          : ads.map((html, idx) =>
-              html ? (
-                <Stack direction="row" key={idx}>
-                  <AdComponent {...adProps} htmlContent={html} />
-                </Stack>
-              ) : (
-                <Box key={idx}>
-                  <Skeleton
-                    variant="rectangular"
-                    sx={{
-                      borderRadius: 2,
-                      minHeight: adProps?.height ?? {
-                        xs: 200,
-                        sm: 225,
-                        md: 275,
-                        lg: 336,
-                      },
-                      maxHeight: adProps?.height ?? {
-                        xs: 200,
-                        sm: 225,
-                        md: 275,
-                        lg: 336,
-                      },
-                      width: adProps?.width ?? "100%",
-                      boxShadow: adProps?.boxShadow ?? 1,
-                    }}
-                  />
+    <Stack position="relative">
+      {loading ? (
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            borderRadius: 2,
+            minHeight: mergedAdProps.height,
+            maxHeight: mergedAdProps.height,
+            width: mergedAdProps.width,
+            boxShadow: mergedAdProps.boxShadow,
+          }}
+        />
+      ) : (
+        <Box ref={sliderRef} className="keen-slider">
+          {ads.map(
+            (html, idx) =>
+              html && (
+                <Box key={idx} className="keen-slider__slide">
+                  <AdComponent {...mergedAdProps} htmlContent={html} />
                 </Box>
               )
-            )}
-      </Slider>
+          )}
+        </Box>
+      )}
 
-      <Steps
-        selectedStep={selectedSlide}
-        steps={zoneIds.length}
-        onClick={(step) => {
-          setSelectedSlide(step);
-          slideRef.current?.slickGoTo(step);
-        }}
-        {...stepsProps}
-      />
-    </Box>
+      {/* Arrows */}
+      {loaded && instanceRef.current && (
+        <>
+          <Arrow
+            left
+            onClick={(e) => {
+              e.stopPropagation();
+              instanceRef.current?.prev();
+            }}
+            disabled={false}
+            color={navColors.arrowColor}
+          />
+          <Arrow
+            onClick={(e) => {
+              e.stopPropagation();
+              instanceRef.current?.next();
+            }}
+            disabled={false}
+            color={navColors.arrowColor}
+          />
+        </>
+      )}
+
+      {/* Dots */}
+      {loaded && instanceRef.current && (
+        <Stack mt={1} direction="row" spacing={1} justifyContent="center">
+          {Array.from({
+            length: instanceRef.current.track.details?.slides.length ?? 0,
+          }).map((_, idx) => (
+            <Box
+              key={idx}
+              onClick={() => instanceRef.current?.moveToIdx(idx)}
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                backgroundColor:
+                  currentSlide === idx
+                    ? navColors.dotActiveColor
+                    : navColors.dotColor,
+                cursor: "pointer",
+              }}
+            />
+          ))}
+        </Stack>
+      )}
+    </Stack>
   );
 };
+
+// ✅ SVG Arrow Component (reused from your original)
+function Arrow({
+  disabled,
+  left,
+  onClick,
+  color = "black",
+}: {
+  disabled: boolean;
+  left?: boolean;
+  onClick: (e: any) => void;
+  color?: string;
+}) {
+  const positionStyle = left ? { left: 8 } : { right: 8 };
+
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 2,
+        ...positionStyle,
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.3 : 1,
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill={color}
+        width="28"
+        height="28"
+      >
+        {left ? (
+          <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+        ) : (
+          <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
+        )}
+      </svg>
+    </Box>
+  );
+}
 
 export default AdStreamCarousel;
