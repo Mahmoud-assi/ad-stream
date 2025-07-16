@@ -1,6 +1,6 @@
 {
   "name": "adstream",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Add a stream of ads with Add-Stream.",
   "keywords": [
     "react",
@@ -16,7 +16,8 @@
   "author": "Add-stream <add6stream@gmail.com>",
   "type": "commonjs",
   "sideEffects": [
-    "./src/web-component.tsx"
+    "./src/web-component.tsx",
+    "*.css"
   ],
   "exports": {
     ".": {

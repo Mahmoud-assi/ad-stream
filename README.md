@@ -136,56 +136,59 @@ const CustomNavigation = ({
   </Box>
 );
 
-function App() {
+export default function Demo() {
   return (
-    <AdStreamCarousel
-      zoneIds={[1, 2, 3]} // example ad zones
-      autoplay={true}
-      autoplayInterval={3000}
-      sliderOptions={{
-        loop: false,
-        slides: { perView: 1, spacing: 12 },
-      }}
-      slotProps={{
-        ad: {
-          aspectRatio: "16 / 9",
-          boxShadow: 3,
-        },
-        navigation: {
-          arrowColor: "green",
-          dotColor: "lightgray",
-          dotActiveColor: "darkgreen",
-        },
-      }}
-      slots={{
-        dots: ({ selectedStep, steps, onClick }) => (
-          <CustomDots
-            selectedStep={selectedStep}
-            steps={steps}
-            onClick={onClick}
-          />
-        ),
-        navigation: ({
-          onPrev,
-          onNext,
-          disabledPrev,
-          disabledNext,
-          currentSlide,
-          totalSlides,
-          arrowColor,
-        }) => (
-          <CustomNavigation
-            onPrev={onPrev}
-            onNext={onNext}
-            disabledPrev={disabledPrev}
-            disabledNext={disabledNext}
-            currentSlide={currentSlide}
-            totalSlides={totalSlides}
-            arrowColor={arrowColor}
-          />
-        ),
-      }}
-    />
+    <Box maxWidth={600} margin="0 auto">
+      <AdStreamCarousel
+        zoneIds={[1, 2, 3]} // example ad zones
+        autoplay={true}
+        autoplayInterval={3000}
+        sliderOptions={{
+          loop: false,
+          slides: { perView: 1, spacing: 12 },
+        }}
+        slotProps={{
+          ad: {
+            aspectRatio: "16 / 9",
+            boxShadow: 3,
+          },
+          navigation: {
+            arrowColor: "green",
+            dotColor: "lightgray",
+            dotActiveColor: "darkgreen",
+          },
+        }}
+        // example slots: optional!
+        slots={{
+          dots: ({ selectedStep, steps, onClick }) => (
+            <CustomDots
+              selectedStep={selectedStep}
+              steps={steps}
+              onClick={onClick}
+            />
+          ),
+          navigation: ({
+            onPrev,
+            onNext,
+            disabledPrev,
+            disabledNext,
+            currentSlide,
+            totalSlides,
+            arrowColor,
+          }) => (
+            <CustomNavigation
+              onPrev={onPrev}
+              onNext={onNext}
+              disabledPrev={disabledPrev}
+              disabledNext={disabledNext}
+              currentSlide={currentSlide}
+              totalSlides={totalSlides}
+              arrowColor={arrowColor}
+            />
+          ),
+        }}
+      />
+    </Box>
   );
 }
 ```
@@ -325,10 +328,6 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
   <head>
     <meta charset="UTF-8" />
     <title>Add Stream Demo</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.css"
-    />
   </head>
   <body>
     <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useKeenSlider } from "keen-slider/react";
+import { useKeenSlider } from "keen-slider/react.js";
 import { Box, Skeleton, Stack } from "@mui/material";
 import AdComponent, { AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
