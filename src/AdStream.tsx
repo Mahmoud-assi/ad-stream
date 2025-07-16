@@ -13,6 +13,12 @@ export interface AdStreamPropsWithZone
    * Optional custom loading component instead of Skeleton.
    */
   loader?: React.ReactNode;
+
+  /**
+   * Optional custom error message to show if ad fails to load.
+   * @default "Failed to load ad."
+   */
+  errorText?: React.ReactNode;
 }
 
 /**
@@ -25,6 +31,7 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
   height = { xs: 200, sm: 225, md: 275, lg: 336 },
   width = "100%",
   boxShadow = 1,
+  errorText = "Failed to load ad.",
   sx,
 }) => {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
@@ -76,7 +83,7 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
           ...sx,
         }}
       >
-        Failed to load ad.
+        {errorText}
       </Box>
     );
   }
