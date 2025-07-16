@@ -15,7 +15,6 @@ const AddStreamElement = reactToWebComponent(AdStream, React, ReactDOMClient, {
     width: "string",
     boxShadow: "number",
     sx: "json",
-    loader: "string",
     errorText: "string",
   },
 });

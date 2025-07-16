@@ -217,7 +217,7 @@ const ads = await fetchAds([6, 17, 18]);
 You can use `adstream` in any HTML file by loading the built-in Web Component.
 
 ```html
-<script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
+<script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
 ```
 
 ### Example: Carousel with Web Component
@@ -234,10 +234,8 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     />
   </head>
   <body>
-    <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
+    <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
     <div style="max-width: 600px; margin: 0 auto">
-      <ad-stream-carousel zone-ids="[18,17]"></ad-stream-carousel>
-
       <ad-stream-carousel
         zone-ids="[18,17]"
         slot-props='{ 
@@ -274,10 +272,8 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     <title>Add Stream Demo</title>
   </head>
   <body>
-    <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
+    <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
     <div style="max-width: 600px; margin: 0 auto">
-      <ad-stream zone-id="17"></ad-stream>
-
       <ad-stream
         zone-id="17"
         height='{"xs":"200px","md":"300px"}'
@@ -285,8 +281,7 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
         aspect-ratio="4 / 3"
         box-shadow="2"
         sx='{"borderRadius":3,"backgroundColor":"#fafafa"}'
-        loader="<div>Loading single ad...</div>"
-        error-text="<div>Oops! Could not load the ad.</div>"
+        error-text="Oops! Could not load the ad."
       ></ad-stream>
     </div>
   </body>
@@ -308,7 +303,7 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
+    <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
   </head>
   <body>
     <div class="container">
