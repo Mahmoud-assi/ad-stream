@@ -15,6 +15,7 @@ A simple and flexible ad-streaming component for React. Supports both single ad 
 - ✔ Custom loader and error fallback
 - ✔ Modular ad fetching utility and React hook (`useAdStream` / `fetchAds`)
 - ✔ Can be used in plain HTML via Web Components
+- ✔ Use `useAdStream` directly with `AdComponent` for advanced layouts
 
 ---
 
@@ -81,6 +82,34 @@ function App() {
 export default App;
 ```
 
+### Using `useAdStream` with `AdComponent`
+
+If you prefer manual control or want a custom layout (instead of using `AdStreamCarousel`), you can use `useAdStream` along with `AdComponent` directly:
+
+```tsx
+import React from "react";
+import { useAdStream, AdComponent } from "adstream";
+
+function CustomLayout() {
+  const { ads, loading } = useAdStream([6, 17, 18]);
+
+  if (loading) return <div>Loading ads...</div>;
+
+  return (
+    <div style={{ display: "grid", gap: 16 }}>
+      {ads.map(
+        (html, index) =>
+          html && (
+            <AdComponent key={index} htmlContent={html} aspectRatio="16 / 9" />
+          )
+      )}
+    </div>
+  );
+}
+
+export default CustomLayout;
+```
+
 ---
 
 ## 🎛️ Hooks & Utilities
@@ -122,16 +151,16 @@ const ads = await fetchAds([6, 17, 18]);
 
 ### AdStream Props
 
-| Prop          | Type             | Description                            |                           |     |
-| ------------- | ---------------- | -------------------------------------- | ------------------------- | --- |
-| `zoneId`      | `number`         | The ad zone ID                         |                           |     |
-| `loader`      | `ReactNode`      | Optional loader fallback               |                           |     |
-| `height`      | \`number         | object\`                               | Responsive height         |     |
-| `width`       | \`number         | string\`                               | Width of the ad component |     |
-| `aspectRatio` | `string`         | CSS aspect ratio for responsive layout |                           |     |
-| `boxShadow`   | `number`         | MUI shadow level                       |                           |     |
-| `sx`          | `SxProps<Theme>` | Additional style overrides             |                           |     |
-| `errorText`   | `ReactNode`      | Error message if ad fails to load      |                           |     |
+| Prop          | Type             | Description                            |                           |
+| ------------- | ---------------- | -------------------------------------- | ------------------------- |
+| `zoneId`      | `number`         | The ad zone ID                         |                           |
+| `loader`      | `ReactNode`      | Optional loader fallback               |                           |
+| `height`      | \`number         | object\`                               | Responsive height         |
+| `width`       | \`number         | string\`                               | Width of the ad component |
+| `aspectRatio` | `string`         | CSS aspect ratio for responsive layout |                           |
+| `boxShadow`   | `number`         | MUI shadow level                       |                           |
+| `sx`          | `SxProps<Theme>` | Additional style overrides             |                           |
+| `errorText`   | `ReactNode`      | Error message if ad fails to load      |                           |
 
 ---
 
