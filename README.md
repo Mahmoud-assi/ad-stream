@@ -51,53 +51,143 @@ export default App;
 ### Carousel (Multiple Ads) - all props example
 
 ```tsx
-iimport React from "react";
+import React from "react";
 import { AdStreamCarousel } from "adstream";
+import { Box, Button } from "@mui/material";
+
+const CustomDots = ({
+  selectedStep,
+  steps,
+  onClick,
+}: {
+  selectedStep: number;
+  steps: number;
+  onClick: (idx: number) => void;
+}) => (
+  <Box display="flex" justifyContent="center" mt={2} gap={2}>
+    {Array.from({ length: steps }).map((_, idx) => (
+      <Box
+        key={idx}
+        onClick={() => onClick(idx)}
+        sx={{
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          backgroundColor: selectedStep === idx ? "blue" : "gray",
+          cursor: "pointer",
+          border: "2px solid black",
+        }}
+      />
+    ))}
+  </Box>
+);
+
+const CustomNavigation = ({
+  onPrev,
+  onNext,
+  disabledPrev,
+  disabledNext,
+  currentSlide,
+  totalSlides,
+  arrowColor = "red",
+}: {
+  onPrev: () => void;
+  onNext: () => void;
+  disabledPrev: boolean;
+  disabledNext: boolean;
+  currentSlide: number;
+  totalSlides: number;
+  arrowColor?: string;
+}) => (
+  <Box
+    sx={{
+      position: "absolute",
+      top: "50%",
+      width: "100%",
+      display: "flex",
+      justifyContent: "space-between",
+      px: 2,
+      pointerEvents: "auto",
+      zIndex: 10,
+      alignItems: "center",
+    }}
+  >
+    <Button
+      onClick={onPrev}
+      disabled={disabledPrev}
+      sx={{ color: arrowColor }}
+      variant="outlined"
+    >
+      Prev
+    </Button>
+
+    <Box sx={{ color: arrowColor, fontWeight: "bold" }}>
+      {currentSlide + 1} / {totalSlides}
+    </Box>
+
+    <Button
+      onClick={onNext}
+      disabled={disabledNext}
+      sx={{ color: arrowColor }}
+      variant="outlined"
+    >
+      Next
+    </Button>
+  </Box>
+);
 
 function App() {
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto" }}>
-      <AdStreamCarousel
-        zoneIds={[6, 17, 18]}
-        slotProps={{
-          ad: {
-            height: { xs: 250, md: 350 },
-            aspectRatio: "16 / 9",
-            boxShadow: 2,
-            sx: { borderRadius: 8 },
-            width: "100%",
-            errorText: <div>Ad failed to load</div>,
-            loader: <div>Loading ad...</div>,
-          },
-          navigation: {
-            arrowColor: "#FF5722",
-            dotColor: "#ccc",
-            dotActiveColor: "#FF5722",
-          },
-        }}
-        slots={{
-          slots: {
-          // Optionally override dots or navigation with custom React nodes
-          dots: (
-            <div style={{ textAlign: "center", marginTop: 10 }}>
-              Custom Dots Here
-            </div>
-          ),
-          // navigation: <CustomNavigationComponent />,
-    },
-        }}
-        sliderOptions={{
-          loop: true,
-          slides: { perView: 1, spacing: 10 },
-        }}
-        autoplay={true}
-        autoplayInterval={5000}
-      />
-    </div>
+    <AdStreamCarousel
+      zoneIds={[1, 2, 3]} // example ad zones
+      autoplay={true}
+      autoplayInterval={3000}
+      sliderOptions={{
+        loop: false,
+        slides: { perView: 1, spacing: 12 },
+      }}
+      slotProps={{
+        ad: {
+          aspectRatio: "16 / 9",
+          boxShadow: 3,
+        },
+        navigation: {
+          arrowColor: "green",
+          dotColor: "lightgray",
+          dotActiveColor: "darkgreen",
+        },
+      }}
+      slots={{
+        dots: ({ selectedStep, steps, onClick }) => (
+          <CustomDots
+            selectedStep={selectedStep}
+            steps={steps}
+            onClick={onClick}
+          />
+        ),
+        navigation: ({
+          onPrev,
+          onNext,
+          disabledPrev,
+          disabledNext,
+          currentSlide,
+          totalSlides,
+          arrowColor,
+        }) => (
+          <CustomNavigation
+            onPrev={onPrev}
+            onNext={onNext}
+            disabledPrev={disabledPrev}
+            disabledNext={disabledNext}
+            currentSlide={currentSlide}
+            totalSlides={totalSlides}
+            arrowColor={arrowColor}
+          />
+        ),
+      }}
+    />
   );
 }
-
-export default App;
 ```
 
 ### Single Ad with Zone ID

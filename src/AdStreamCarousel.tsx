@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import { Box, Skeleton, Stack } from "@mui/material";
-import AdComponent, { type AdComponentProps } from "./AdComponent";
+import AdComponent, { AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
-import type { KeenSliderOptions } from "keen-slider";
+import { KeenSliderOptions } from "keen-slider";
+import useInjectKeenSliderStyles from "./useInjectKeenSliderStyles";
 // import "keen-slider/keen-slider.min.css";
 
-// Component Props Interface
+/**
+ * Props for AdStreamCarousel component
+ */
 export interface AdStreamCarouselProps {
   /**
    * Array of Ad zone IDs to fetch ads for
@@ -18,7 +21,7 @@ export interface AdStreamCarouselProps {
    */
   slotProps?: {
     /**
-     * Props passed to <AdStream />
+     * Props passed to <AdComponent />
      */
     ad?: Partial<AdComponentProps>;
 
@@ -36,11 +39,33 @@ export interface AdStreamCarouselProps {
    * Override internal components like dots and navigation arrows
    */
   slots?: {
-    /** Custom dot indicators */
-    dots?: React.ReactNode;
+    /**
+     * Custom dot indicators
+     * Can be ReactNode or render function with control props
+     */
+    dots?:
+      | React.ReactNode
+      | ((props: {
+          selectedStep: number;
+          steps: number;
+          onClick: (idx: number) => void;
+        }) => React.ReactNode);
 
-    /** Custom navigation arrows */
-    navigation?: React.ReactNode;
+    /**
+     * Custom navigation arrows
+     * Can be ReactNode or render function with navigation callbacks and info
+     */
+    navigation?:
+      | React.ReactNode
+      | ((props: {
+          onPrev: () => void;
+          onNext: () => void;
+          disabledPrev: boolean;
+          disabledNext: boolean;
+          currentSlide: number;
+          totalSlides: number;
+          arrowColor?: string;
+        }) => React.ReactNode);
   };
 
   /**
@@ -48,18 +73,20 @@ export interface AdStreamCarouselProps {
    */
   sliderOptions?: KeenSliderOptions;
 
-  /** Enables or disables autoplay
-   *  Default: "true"
+  /**
+   * Enables or disables autoplay
+   * Default: true
    */
   autoplay?: boolean;
 
-  /** Interval in ms between slides
-   *  Default: "4000"
+  /**
+   * Interval in ms between slides
+   * Default: 4000
    */
   autoplayInterval?: number;
 }
 
-//  Default values
+// Default props for the ads
 const defaultAdProps: Partial<AdComponentProps> = {
   aspectRatio: "600 / 336",
   height: { xs: 200, sm: 225, md: 275, lg: 336 },
@@ -67,12 +94,14 @@ const defaultAdProps: Partial<AdComponentProps> = {
   boxShadow: 1,
 };
 
+// Default colors for navigation arrows and dots
 const defaultNavColors = {
   arrowColor: "rgba(0, 0, 0, 0.6)",
   dotColor: "rgba(0, 0, 0, 0.3)",
   dotActiveColor: "primary.main",
 };
 
+// Default Keen Slider options
 const defaultSliderOptions: KeenSliderOptions = {
   initial: 0,
   loop: true,
@@ -94,9 +123,14 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   const mergedAdProps = { ...defaultAdProps, ...adProps };
   const navColors = { ...defaultNavColors, ...navigation };
 
+  useInjectKeenSliderStyles();
+
+  // State for current active slide index
   const [currentSlide, setCurrentSlide] = useState(0);
+  // State to know when slider is initialized
   const [loaded, setLoaded] = useState(false);
 
+  // Merge slider options with event handlers
   const mergedSliderOptions: KeenSliderOptions = {
     ...defaultSliderOptions,
     ...sliderOptions,
@@ -110,10 +144,13 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
     },
   };
 
+  // Fetch ads for given zone IDs
   const { ads, loading } = useAdStream(zoneIds);
+  // Initialize Keen Slider hook
   const [sliderRef, instanceRef] =
     useKeenSlider<HTMLDivElement>(mergedSliderOptions);
 
+  // Autoplay effect using interval
   useEffect(() => {
     if (!autoplay || !instanceRef.current) return;
 
@@ -124,9 +161,13 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
     return () => clearInterval(id);
   }, [autoplay, autoplayInterval, instanceRef.current]);
 
+  // Total number of slides available
+  const totalSlides = instanceRef.current?.track.details.slides.length ?? 0;
+
   return (
     <Stack position="relative">
       {loading ? (
+        // Show skeleton loader while ads are loading
         <Skeleton
           variant="rectangular"
           sx={{
@@ -138,6 +179,7 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
           }}
         />
       ) : (
+        // Render Keen Slider with fetched ads
         <Box ref={sliderRef} className="keen-slider">
           {ads.map(
             (html, idx) =>
@@ -154,8 +196,23 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
       {loaded && instanceRef.current && (
         <>
           {slots.navigation ? (
-            slots.navigation
+            // If navigation slot is a function, call it with handlers and state
+            typeof slots.navigation === "function" ? (
+              slots.navigation({
+                onPrev: () => instanceRef.current?.prev(),
+                onNext: () => instanceRef.current?.next(),
+                disabledPrev: false, // You can implement real disable logic here if needed
+                disabledNext: false,
+                currentSlide,
+                totalSlides,
+                arrowColor: navColors.arrowColor,
+              })
+            ) : (
+              // If it's a ReactNode, render directly
+              slots.navigation
+            )
           ) : (
+            // Default arrows
             <>
               <Arrow
                 left
@@ -183,12 +240,21 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
       {loaded && instanceRef.current && (
         <>
           {slots.dots ? (
-            slots.dots
+            // If dots slot is a function, call it with props
+            typeof slots.dots === "function" ? (
+              slots.dots({
+                selectedStep: currentSlide,
+                steps: totalSlides,
+                onClick: (idx: number) => instanceRef.current?.moveToIdx(idx),
+              })
+            ) : (
+              // If ReactNode, render as is
+              slots.dots
+            )
           ) : (
+            // Default dots implementation
             <Stack mt={1} direction="row" spacing={1} justifyContent="center">
-              {Array.from({
-                length: instanceRef.current.track.details?.slides.length ?? 0,
-              }).map((_, idx) => (
+              {Array.from({ length: totalSlides }).map((_, idx) => (
                 <Box
                   key={idx}
                   onClick={() => instanceRef.current?.moveToIdx(idx)}
@@ -212,7 +278,9 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   );
 };
 
-// ✅ SVG Arrow Component (reused from your original)
+/**
+ * SVG Arrow Component used for default navigation arrows
+ */
 function Arrow({
   disabled,
   left,
