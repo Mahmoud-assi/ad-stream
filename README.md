@@ -48,6 +48,51 @@ function App() {
 export default App;
 ```
 
+### Carousel (Multiple Ads) - all props example
+
+```tsx
+iimport React from "react";
+import { AdStreamCarousel } from "adstream";
+
+function App() {
+  return (
+    <div style={{ maxWidth: 600, margin: "0 auto" }}>
+      <AdStreamCarousel
+        zoneIds={[6, 17, 18]}
+        slotProps={{
+          ad: {
+            height: { xs: 250, md: 350 },
+            aspectRatio: "16 / 9",
+            boxShadow: 2,
+            sx: { borderRadius: 8 },
+            width: "100%",
+            errorText: <div>Ad failed to load</div>,
+            loader: <div>Loading ad...</div>,
+          },
+          navigation: {
+            arrowColor: "#FF5722",
+            dotColor: "#ccc",
+            dotActiveColor: "#FF5722",
+          },
+        }}
+        slots={{
+          nextArrow: <button>Next →</button>,
+          prevArrow: <button>← Prev</button>,
+        }}
+        sliderOptions={{
+          loop: true,
+          slides: { perView: 1, spacing: 10 },
+        }}
+        autoplay={true}
+        autoplayInterval={5000}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
 ### Single Ad with Zone ID
 
 ```tsx
@@ -61,7 +106,7 @@ function App() {
 export default App;
 ```
 
-### Single Ad with Custom Loader and Styling
+### Single Ad with Zone ID - all props example
 
 ```tsx
 import React from "react";
@@ -71,10 +116,13 @@ function App() {
   return (
     <AdStream
       zoneId={18}
-      height={{ xs: 200, md: 300 }}
-      boxShadow={3}
-      aspectRatio="16 / 9"
-      loader={<div>Loading...</div>}
+      height={{ xs: 200, md: 300, lg: 400, xl: 500 }}
+      width="100%"
+      aspectRatio="4 / 3"
+      boxShadow={4}
+      sx={{ borderRadius: 12, backgroundColor: "#fafafa", p: 2 }}
+      loader={<div>Loading single ad...</div>}
+      errorText={<div>Oops! Could not load the ad.</div>}
     />
   );
 }
@@ -138,8 +186,6 @@ const ads = await fetchAds([6, 17, 18]);
 
 ## 🎛️ Customization
 
-### AdStreamCarousel Props
-
 | Prop                                  | Type                        | Description                                                                                    |
 | ------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
 | `zoneIds`                             | `number[]`                  | List of ad zone IDs                                                                            |
@@ -148,6 +194,8 @@ const ads = await fetchAds([6, 17, 18]);
 | `slotProps.navigation.dotColor`       | `string`                    | Inactive pagination dot color                                                                  |
 | `slotProps.navigation.dotActiveColor` | `string`                    | Active pagination dot color                                                                    |
 | `sliderOptions`                       | `KeenSliderOptions`         | Override Keen Slider behavior (e.g. `loop`, `slides.perView`, `spacing`, etc.)                 |
+| `autoplay`                            | `boolean`                   | Enable or disable autoplay                                                                     |
+| `autoplayInterval`                    | `number`                    | Interval in milliseconds for autoplay                                                          |
 
 ### AdStream Props
 
@@ -175,6 +223,23 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
 ### Example: Carousel with Web Component
 
 ```html
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Add Stream Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.css"
+    />
+  </head>
+  <body>
+    <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
+    <div style="max-width: 600px; margin: 0 auto">
+     
+    </div>
+  </body>
+</html> -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -189,6 +254,28 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
     <div style="max-width: 600px; margin: 0 auto">
       <ad-stream-carousel zone-ids="[18,17]"></ad-stream-carousel>
+
+      <ad-stream-carousel
+        zone-ids="[18,17]"
+        slot-props='{ 
+          "ad": {
+            "height": {"xs": 250, "md": 350},
+            "aspectRatio": "16 / 9",
+            "boxShadow": 2,
+            "sx": {"borderRadius": 8},
+            "width": "100%"
+          },
+          "navigation": {
+            "arrowColor": "#FF5722",
+            "dotColor": "#ccc",
+            "dotActiveColor": "#FF5722"
+          }
+        }'
+        slider-options='{ "loop": true, "slides": {"perView": 1, "spacing": 10} }'
+        autoplay
+        autoplay-interval="5000"
+      >
+      </ad-stream-carousel>
     </div>
   </body>
 </html>
@@ -207,6 +294,17 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
     <div style="max-width: 600px; margin: 0 auto">
       <ad-stream zone-id="17"></ad-stream>
+
+      <ad-stream
+        zone-id="17"
+        height='{"xs":200,"md":300}'
+        width="100%"
+        aspect-ratio="4 / 3"
+        box-shadow="4"
+        sx='{"borderRadius":12,"backgroundColor":"#fafafa"}'
+        loader="<div>Loading single ad...</div>"
+        error-text="<div>Oops! Could not load the ad.</div>"
+      ></ad-stream>
     </div>
   </body>
 </html>

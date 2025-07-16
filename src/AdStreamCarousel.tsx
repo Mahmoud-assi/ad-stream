@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import { Box, Skeleton, Stack } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
@@ -33,9 +33,30 @@ export interface AdStreamCarouselProps {
   };
 
   /**
+   * Override internal components like dots and navigation arrows
+   */
+  slots?: {
+    /** Custom dot indicators */
+    dots?: React.ReactNode;
+
+    /** Custom navigation arrows */
+    navigation?: React.ReactNode;
+  };
+
+  /**
    * Keen Slider configuration override
    */
   sliderOptions?: KeenSliderOptions;
+
+  /** Enables or disables autoplay
+   *  Default: "true"
+   */
+  autoplay?: boolean;
+
+  /** Interval in ms between slides
+   *  Default: "4000"
+   */
+  autoplayInterval?: number;
 }
 
 //  Default values
@@ -65,6 +86,9 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   zoneIds,
   slotProps = {},
   sliderOptions = {},
+  autoplay = true,
+  autoplayInterval = 4000,
+  slots = {},
 }) => {
   const { ad: adProps = {}, navigation = {} } = slotProps;
   const mergedAdProps = { ...defaultAdProps, ...adProps };
@@ -89,6 +113,16 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   const { ads, loading } = useAdStream(zoneIds);
   const [sliderRef, instanceRef] =
     useKeenSlider<HTMLDivElement>(mergedSliderOptions);
+
+  useEffect(() => {
+    if (!autoplay || !instanceRef.current) return;
+
+    const id = setInterval(() => {
+      instanceRef.current?.next();
+    }, autoplayInterval ?? 4000);
+
+    return () => clearInterval(id);
+  }, [autoplay, autoplayInterval, instanceRef.current]);
 
   return (
     <Stack position="relative">
@@ -116,51 +150,63 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
         </Box>
       )}
 
-      {/* Arrows */}
+      {/* Render custom or default navigation arrows */}
       {loaded && instanceRef.current && (
         <>
-          <Arrow
-            left
-            onClick={(e) => {
-              e.stopPropagation();
-              instanceRef.current?.prev();
-            }}
-            disabled={false}
-            color={navColors.arrowColor}
-          />
-          <Arrow
-            onClick={(e) => {
-              e.stopPropagation();
-              instanceRef.current?.next();
-            }}
-            disabled={false}
-            color={navColors.arrowColor}
-          />
+          {slots.navigation ? (
+            slots.navigation
+          ) : (
+            <>
+              <Arrow
+                left
+                onClick={(e) => {
+                  e.stopPropagation();
+                  instanceRef.current?.prev();
+                }}
+                disabled={false}
+                color={navColors.arrowColor}
+              />
+              <Arrow
+                onClick={(e) => {
+                  e.stopPropagation();
+                  instanceRef.current?.next();
+                }}
+                disabled={false}
+                color={navColors.arrowColor}
+              />
+            </>
+          )}
         </>
       )}
 
-      {/* Dots */}
+      {/* Render custom or default dots */}
       {loaded && instanceRef.current && (
-        <Stack mt={1} direction="row" spacing={1} justifyContent="center">
-          {Array.from({
-            length: instanceRef.current.track.details?.slides.length ?? 0,
-          }).map((_, idx) => (
-            <Box
-              key={idx}
-              onClick={() => instanceRef.current?.moveToIdx(idx)}
-              sx={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                backgroundColor:
-                  currentSlide === idx
-                    ? navColors.dotActiveColor
-                    : navColors.dotColor,
-                cursor: "pointer",
-              }}
-            />
-          ))}
-        </Stack>
+        <>
+          {slots.dots ? (
+            slots.dots
+          ) : (
+            <Stack mt={1} direction="row" spacing={1} justifyContent="center">
+              {Array.from({
+                length: instanceRef.current.track.details?.slides.length ?? 0,
+              }).map((_, idx) => (
+                <Box
+                  key={idx}
+                  onClick={() => instanceRef.current?.moveToIdx(idx)}
+                  sx={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    backgroundColor:
+                      currentSlide === idx
+                        ? navColors.dotActiveColor
+                        : navColors.dotColor,
+                    cursor: "pointer",
+                  }}
+                />
+              ))}
+            </Stack>
+          )}
+        </>
       )}
     </Stack>
   );
