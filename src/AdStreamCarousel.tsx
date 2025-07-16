@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useKeenSlider } from "keen-slider/react.js";
 import { Box, Skeleton, Stack } from "@mui/material";
 import AdComponent, { AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
 import { KeenSliderOptions } from "keen-slider";
-import useInjectKeenSliderStyles from "./useInjectKeenSliderStyles";
+import InjectKeenSliderStyles from "./InjectKeenSliderStyles";
 // import "keen-slider/keen-slider.min.css";
 
 /**
@@ -123,26 +123,27 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   const mergedAdProps = { ...defaultAdProps, ...adProps };
   const navColors = { ...defaultNavColors, ...navigation };
 
-  useInjectKeenSliderStyles();
-
   // State for current active slide index
   const [currentSlide, setCurrentSlide] = useState(0);
   // State to know when slider is initialized
   const [loaded, setLoaded] = useState(false);
 
   // Merge slider options with event handlers
-  const mergedSliderOptions: KeenSliderOptions = {
-    ...defaultSliderOptions,
-    ...sliderOptions,
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel);
-      sliderOptions.slideChanged?.(slider);
-    },
-    created(slider) {
-      setLoaded(true);
-      sliderOptions?.created?.(slider);
-    },
-  };
+  const mergedSliderOptions: KeenSliderOptions = useMemo(
+    () => ({
+      ...defaultSliderOptions,
+      ...sliderOptions,
+      slideChanged(slider) {
+        setCurrentSlide(slider.track.details.rel);
+        sliderOptions.slideChanged?.(slider);
+      },
+      created(slider) {
+        setLoaded(true);
+        sliderOptions?.created?.(slider);
+      },
+    }),
+    [sliderOptions]
+  );
 
   // Fetch ads for given zone IDs
   const { ads, loading } = useAdStream(zoneIds);
@@ -162,10 +163,10 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   }, [autoplay, autoplayInterval, instanceRef.current]);
 
   // Total number of slides available
-  const totalSlides = instanceRef.current?.track.details.slides.length ?? 0;
-
+  const totalSlides = instanceRef.current?.track?.details?.slides?.length ?? 0;
   return (
     <Stack position="relative">
+      <InjectKeenSliderStyles />
       {loading ? (
         // Show skeleton loader while ads are loading
         <Skeleton

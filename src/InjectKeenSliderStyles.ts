@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function useInjectKeenSliderStyles() {
+export default function InjectKeenSliderStyles() {
   useEffect(() => {
     if (typeof document === "undefined") return; // SSR safety
     if (!document.getElementById("keen-slider-css")) {
@@ -12,4 +12,5 @@ export default function useInjectKeenSliderStyles() {
       document.head.appendChild(link);
     }
   }, []);
+  return null;
 }
