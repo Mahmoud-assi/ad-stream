@@ -44,7 +44,7 @@ const AdComponent: React.FC<AdComponentProps> = ({
   height = { xs: 200, sm: 225, md: 275, lg: 336 },
   width = "100%",
   boxShadow = 1,
-  sx,
+  sx = { borderRadius: 2 },
 }) => {
   const blob = new Blob([htmlContent], { type: "text/html" });
   const blobUrl = URL.createObjectURL(blob);
@@ -54,7 +54,6 @@ const AdComponent: React.FC<AdComponentProps> = ({
       sx={{
         aspectRatio,
         overflow: "hidden",
-        borderRadius: 4,
         width,
         maxHeight: height,
         minHeight: height,

@@ -32,7 +32,7 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
   width = "100%",
   boxShadow = 1,
   errorText = "Failed to load ad.",
-  sx,
+  sx = { borderRadius: 2 },
 }) => {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [error, setError] = useState(false);
@@ -78,7 +78,6 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
           height,
           width,
           boxShadow,
-          borderRadius: 2,
           bgcolor: "grey.100",
           ...sx,
         }}
@@ -93,7 +92,13 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
       loader || (
         <Skeleton
           variant="rectangular"
-          sx={{ borderRadius: 2, aspectRatio, height, width, boxShadow, ...sx }}
+          sx={{
+            aspectRatio,
+            height,
+            width,
+            boxShadow,
+            ...sx,
+          }}
         />
       )
     );

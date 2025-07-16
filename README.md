@@ -223,23 +223,6 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
 ### Example: Carousel with Web Component
 
 ```html
-<!-- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Add Stream Demo</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.css"
-    />
-  </head>
-  <body>
-    <script src="https://unpkg.com/adstream@1.0.13/dist/browser/web-component.global.js"></script>
-    <div style="max-width: 600px; margin: 0 auto">
-     
-    </div>
-  </body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -259,7 +242,7 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
         zone-ids="[18,17]"
         slot-props='{ 
           "ad": {
-            "height": {"xs": 250, "md": 350},
+            "height": {"xs": "250px", "md": "350px", "lg": "600px"},            
             "aspectRatio": "16 / 9",
             "boxShadow": 2,
             "sx": {"borderRadius": 8},
@@ -297,11 +280,11 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
 
       <ad-stream
         zone-id="17"
-        height='{"xs":200,"md":300}'
+        height='{"xs":"200px","md":"300px"}'
         width="100%"
         aspect-ratio="4 / 3"
-        box-shadow="4"
-        sx='{"borderRadius":12,"backgroundColor":"#fafafa"}'
+        box-shadow="2"
+        sx='{"borderRadius":3,"backgroundColor":"#fafafa"}'
         loader="<div>Loading single ad...</div>"
         error-text="<div>Oops! Could not load the ad.</div>"
       ></ad-stream>

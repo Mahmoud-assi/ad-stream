@@ -130,11 +130,11 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
         <Skeleton
           variant="rectangular"
           sx={{
-            borderRadius: 2,
             minHeight: mergedAdProps.height,
             maxHeight: mergedAdProps.height,
             width: mergedAdProps.width,
             boxShadow: mergedAdProps.boxShadow,
+            ...mergedAdProps.sx,
           }}
         />
       ) : (
