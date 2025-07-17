@@ -345,8 +345,9 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
           },
           "navigation": {
             "arrowColor": "#FF5722",
-            "dotColor": "#ccc",
-            "dotActiveColor": "#FF5722"
+            "unselectedColor": "#ccc",
+            "selectedColor": "#FF5722"
+            "bgcolor":"#888"
           }
         }'
         slider-options='{ "loop": true, "slides": {"perView": 1, "spacing": 10} }'
