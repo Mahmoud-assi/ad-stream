@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig([
-  // ✅ Build for React/Angular/Vue apps (ESM + CJS, externalized React)
+  // ✅ React/Next/Vue builds (ESM + CJS)
   {
     entry: ["src/index.tsx"],
     format: ["esm", "cjs"],
@@ -9,18 +9,18 @@ export default defineConfig([
     bundle: true,
     splitting: false,
     clean: true,
-    external: ["react", "react-dom"],
+    external: ["react", "react-dom"], // ✅ Do not bundle React
     treeshake: true,
     outDir: "dist",
   },
 
-  // ✅ Browser build (Web Component with React + ReactDOM bundled)
+  // ✅ Browser (Web Component) build — bundles everything including React
   {
     entry: {
       "browser/web-component": "src/web-component.tsx",
     },
     format: ["iife"],
-    globalName: "AdStreamComponent", // Not critical but required by tsup for IIFE
+    globalName: "AdStreamComponent",
     define: {
       "process.env.NODE_ENV": JSON.stringify("production"),
     },
@@ -29,7 +29,7 @@ export default defineConfig([
     dts: false,
     clean: false,
     outDir: "dist",
-    external: [], // ← Everything is bundled in!
+    external: [], // ✅ Bundle everything
     treeshake: true,
   },
 ]);

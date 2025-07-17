@@ -1,6 +1,6 @@
 {
   "name": "adstream",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Add a stream of ads with Add-Stream.",
   "keywords": [
     "react",
@@ -29,6 +29,7 @@
     }
   },
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
@@ -42,15 +43,24 @@
     "@emotion/styled": "^11.0.0",
     "@mui/material": "^5.0.0",
     "keen-slider": "^6.8.6",
-    "react": ">=17.0.0",
-    "react-dom": ">=17.0.0",
     "react-to-webcomponent": "^2.0.1"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0"
-  },
-  "module": "dist/index.mjs"
+  }
 }
