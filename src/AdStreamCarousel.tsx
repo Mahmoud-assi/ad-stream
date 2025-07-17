@@ -30,10 +30,10 @@ export interface AdStreamCarouselProps {
      * Navigation color overrides
      */
     navigation?: {
-      bgColor: string;
-      selectedColor: string;
-      unselectedColor: string;
-      arrowColor: string;
+      bgColor?: string;
+      selectedColor?: string;
+      unselectedColor?: string;
+      arrowColor?: string;
     };
   };
 
@@ -66,7 +66,6 @@ export interface AdStreamCarouselProps {
           disabledNext: boolean;
           currentSlide: number;
           totalSlides: number;
-          arrowColor?: string;
         }) => React.ReactNode);
   };
 
@@ -209,7 +208,6 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
                 disabledNext: false,
                 currentSlide,
                 totalSlides,
-                arrowColor: navColors.arrowColor,
               })
             ) : (
               // If it's a ReactNode, render directly

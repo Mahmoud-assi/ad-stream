@@ -89,7 +89,6 @@ const CustomNavigation = ({
   disabledNext,
   currentSlide,
   totalSlides,
-  arrowColor = "red",
 }: {
   onPrev: () => void;
   onNext: () => void;
@@ -97,7 +96,6 @@ const CustomNavigation = ({
   disabledNext: boolean;
   currentSlide: number;
   totalSlides: number;
-  arrowColor?: string;
 }) => (
   <Box
     sx={{
@@ -112,12 +110,7 @@ const CustomNavigation = ({
       alignItems: "center",
     }}
   >
-    <Button
-      onClick={onPrev}
-      disabled={disabledPrev}
-      sx={{ color: arrowColor }}
-      variant="outlined"
-    >
+    <Button onClick={onPrev} disabled={disabledPrev} variant="outlined">
       Prev
     </Button>
 
@@ -175,7 +168,6 @@ export default function Demo() {
             disabledNext,
             currentSlide,
             totalSlides,
-            arrowColor,
           }) => (
             <CustomNavigation
               onPrev={onPrev}
@@ -184,7 +176,6 @@ export default function Demo() {
               disabledNext={disabledNext}
               currentSlide={currentSlide}
               totalSlides={totalSlides}
-              arrowColor={arrowColor}
             />
           ),
         }}
