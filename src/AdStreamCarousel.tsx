@@ -5,6 +5,7 @@ import AdComponent, { AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
 import { KeenSliderOptions } from "keen-slider";
 import InjectKeenSliderStyles from "./InjectKeenSliderStyles";
+import Steps from "./Steps";
 // import "keen-slider/keen-slider.min.css";
 
 /**
@@ -29,9 +30,10 @@ export interface AdStreamCarouselProps {
      * Navigation color overrides
      */
     navigation?: {
-      arrowColor?: string;
-      dotColor?: string;
-      dotActiveColor?: string;
+      bgColor: string;
+      selectedColor: string;
+      unselectedColor: string;
+      arrowColor: string;
     };
   };
 
@@ -96,9 +98,10 @@ const defaultAdProps: Partial<AdComponentProps> = {
 
 // Default colors for navigation arrows and dots
 const defaultNavColors = {
+  bgColor: "rgba(0,0,0,0.125)",
+  selectedColor: "primary.main",
+  unselectedColor: "grey.500",
   arrowColor: "rgba(0, 0, 0, 0.6)",
-  dotColor: "rgba(0, 0, 0, 0.3)",
-  dotActiveColor: "primary.main",
 };
 
 // Default Keen Slider options
@@ -254,24 +257,14 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
             )
           ) : (
             // Default dots implementation
-            <Stack mt={1} direction="row" spacing={1} justifyContent="center">
-              {Array.from({ length: totalSlides }).map((_, idx) => (
-                <Box
-                  key={idx}
-                  onClick={() => instanceRef.current?.moveToIdx(idx)}
-                  sx={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: "50%",
-                    backgroundColor:
-                      currentSlide === idx
-                        ? navColors.dotActiveColor
-                        : navColors.dotColor,
-                    cursor: "pointer",
-                  }}
-                />
-              ))}
-            </Stack>
+            <Steps
+              steps={totalSlides}
+              onClick={(step) => instanceRef.current?.moveToIdx(step)}
+              selectedStep={currentSlide}
+              selectedColor={navColors?.selectedColor}
+              unselectedColor={navColors?.unselectedColor}
+              bgColor={navColors?.bgColor}
+            />
           )}
         </>
       )}

@@ -40,7 +40,7 @@ export default function Steps({
       direction="row"
       alignItems="center"
       justifyContent="center"
-      spacing={0.75}
+      gap={0.75}
       position="absolute"
       bottom={12}
       left="50%"

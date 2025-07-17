@@ -153,9 +153,10 @@ export default function Demo() {
             boxShadow: 3,
           },
           navigation: {
-            arrowColor: "green",
-            dotColor: "lightgray",
-            dotActiveColor: "darkgreen",
+            arrowColor: "green", // color of the arrows if there is no custom navigations!
+            bgcolor: "grey", // background of the steps!
+            unselectedColor: "lightgray",
+            selectedColor: "darkgreen",
           },
         }}
         // example slots: optional!
@@ -286,16 +287,16 @@ const ads = await fetchAds([6, 17, 18]);
 
 ## 🎛️ Customization
 
-| Prop                                  | Type                        | Description                                                                                    |
-| ------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
-| `zoneIds`                             | `number[]`                  | List of ad zone IDs                                                                            |
-| `slotProps.ad`                        | `Partial<AdComponentProps>` | Customize individual ads inside the carousel (e.g. `height`, `aspectRatio`, `boxShadow`, etc.) |
-| `slotProps.navigation.arrowColor`     | `string`                    | Override left/right arrow color                                                                |
-| `slotProps.navigation.dotColor`       | `string`                    | Inactive pagination dot color                                                                  |
-| `slotProps.navigation.dotActiveColor` | `string`                    | Active pagination dot color                                                                    |
-| `sliderOptions`                       | `KeenSliderOptions`         | Override Keen Slider behavior (e.g. `loop`, `slides.perView`, `spacing`, etc.)                 |
-| `autoplay`                            | `boolean`                   | Enable or disable autoplay                                                                     |
-| `autoplayInterval`                    | `number`                    | Interval in milliseconds for autoplay                                                          |
+| Prop                                   | Type                        | Description                                                                                    |
+| -------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
+| `zoneIds`                              | `number[]`                  | List of ad zone IDs                                                                            |
+| `slotProps.ad`                         | `Partial<AdComponentProps>` | Customize individual ads inside the carousel (e.g. `height`, `aspectRatio`, `boxShadow`, etc.) |
+| `slotProps.navigation.arrowColor`      | `string`                    | Override left/right arrow color                                                                |
+| `slotProps.navigation.unselectedColor` | `string`                    | Inactive pagination dot color                                                                  |
+| `slotProps.navigation.selectedColor`   | `string`                    | Active pagination dot color                                                                    |
+| `sliderOptions`                        | `KeenSliderOptions`         | Override Keen Slider behavior (e.g. `loop`, `slides.perView`, `spacing`, etc.)                 |
+| `autoplay`                             | `boolean`                   | Enable or disable autoplay                                                                     |
+| `autoplayInterval`                     | `number`                    | Interval in milliseconds for autoplay                                                          |
 
 ### AdStream Props
 
