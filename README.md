@@ -16,7 +16,7 @@ A simple and flexible ad-streaming component for React. Supports both single ad 
 - ✔ Custom loader and error fallback
 - ✔ Modular ad fetching utility and React hook (`useAdStream` / `fetchAds`)
 - ✔ Can be used in plain HTML via Web Components
-- ✔ Can be embedded in **Flutter** using WebView
+- ✔ Can be embedded in `Flutter` using WebView
 - ✔ Use `useAdStream` directly with `AdComponent` for advanced layouts
 
 ---

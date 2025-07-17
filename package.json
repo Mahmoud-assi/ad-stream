@@ -1,6 +1,6 @@
 {
   "name": "adstream",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Add a stream of ads with Add-Stream.",
   "keywords": [
     "react",
@@ -39,9 +39,9 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@emotion/react": "^11.0.0",
-    "@emotion/styled": "^11.0.0",
-    "@mui/material": "^5.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^5.18.0",
     "keen-slider": "^6.8.6",
     "react-to-webcomponent": "^2.0.1"
   },
