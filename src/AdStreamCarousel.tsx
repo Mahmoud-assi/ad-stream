@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useKeenSlider } from "keen-slider/react.js";
-import { Box, Skeleton, Stack } from "@mui/material";
+import { Box, Skeleton, Stack, useTheme } from "@mui/material";
 import AdComponent, { AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
 import { KeenSliderOptions } from "keen-slider";
 import InjectKeenSliderStyles from "./InjectKeenSliderStyles";
 import Steps from "./Steps";
-// import "keen-slider/keen-slider.min.css";
 
 /**
  * Props for AdStreamCarousel component
@@ -85,6 +84,12 @@ export interface AdStreamCarouselProps {
    * Default: 4000
    */
   autoplayInterval?: number;
+
+  /**
+   * Text direction override ("ltr" or "rtl")
+   * If not provided, defaults to MUI theme direction
+   */
+  direction?: "ltr" | "rtl";
 }
 
 // Default props for the ads
@@ -120,10 +125,17 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   autoplay = true,
   autoplayInterval = 4000,
   slots = {},
+  direction,
 }) => {
   const { ad: adProps = {}, navigation = {} } = slotProps;
   const mergedAdProps = { ...defaultAdProps, ...adProps };
   const navColors = { ...defaultNavColors, ...navigation };
+  const theme = useTheme();
+
+  const isRTL = useMemo(() => {
+    const resolvedDirection = direction || theme.direction || "ltr";
+    return resolvedDirection === "rtl";
+  }, [direction, theme.direction]);
 
   // State for current active slide index
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -217,7 +229,7 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
             // Default arrows
             <>
               <Arrow
-                left
+                left={isRTL ? false : true} // RTL → arrow on right
                 onClick={(e) => {
                   e.stopPropagation();
                   instanceRef.current?.prev();
@@ -226,6 +238,7 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
                 color={navColors.arrowColor}
               />
               <Arrow
+                left={isRTL ? true : false} // RTL → arrow on left
                 onClick={(e) => {
                   e.stopPropagation();
                   instanceRef.current?.next();

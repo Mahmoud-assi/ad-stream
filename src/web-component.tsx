@@ -33,6 +33,7 @@ const CarouselElement = reactToWebComponent(
       sliderOptions: "json",
       autoplay: "boolean",
       autoplayInterval: "number",
+      direction: "string",
     },
   }
 );

@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/adstream.svg)](https://www.npmjs.com/package/adstream)
 [![license](https://img.shields.io/npm/l/adstream.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-supported-blue.svg)](#)
 
 A simple and flexible ad-streaming component for React. Supports both single ad display and multi-zone ad carousels.
 
@@ -15,6 +16,7 @@ A simple and flexible ad-streaming component for React. Supports both single ad 
 - ✔ Custom loader and error fallback
 - ✔ Modular ad fetching utility and React hook (`useAdStream` / `fetchAds`)
 - ✔ Can be used in plain HTML via Web Components
+- ✔ Can be embedded in **Flutter** using WebView
 - ✔ Use `useAdStream` directly with `AdComponent` for advanced layouts
 
 ---
@@ -222,6 +224,122 @@ function App() {
 export default App;
 ```
 
+### integration with Next.js, both for:
+
+✅ Pages Router (Next.js v12/v13)
+
+✅ App Router (Next.js 13+ with /app)
+
+It includes:
+
+- Dynamic import (next/dynamic)
+
+- ssr: false usage
+
+---
+
+✅ Pages Router (with SSR-safe dynamic import)
+Use `next/dynamic` to safely render AdStream client-side only:
+
+```tsx
+// components/SafeAdStreamWrapper.tsx
+import React from "react";
+import { AdStreamCarousel } from "adstream";
+import { useTheme } from "@emotion/react";
+
+const SafeAdStreamWrapper = () => {
+  const { colors } = useTheme();
+  return (
+    <AdStreamCarousel
+      zoneIds={[6, 17, 18]}
+      slotProps={{
+        ad: {
+          height: { xs: 200, md: 336 },
+          aspectRatio: "16 / 9",
+          boxShadow: 2,
+          sx: { borderRadius: 0 },
+          width: "100%",
+        },
+        navigation: {
+          selectedColor: colors.secondary,
+          bgColor: "",
+        },
+      }}
+      slots={{
+        navigation: () => null,
+      }}
+      sliderOptions={{
+        loop: true,
+        slides: { perView: 1, spacing: 10 },
+      }}
+      autoplay
+      autoplayInterval={3000}
+    />
+  );
+};
+
+export default SafeAdStreamWrapper;
+
+// Then import it dynamically in your page:
+
+// pages/index.tsx or any route
+import dynamic from "next/dynamic";
+
+const SafeAdStreamCarousel = dynamic(
+  () => import("../components/SafeAdStreamWrapper"),
+  {
+    ssr: false,
+    loading: () => <div>Loading ads...</div>,
+  }
+);
+
+export default function HomePage() {
+  return (
+    <div>
+      <h2>Dashboard</h2>
+      <SafeAdStreamCarousel />
+    </div>
+  );
+}
+```
+
+---
+
+✅ App Router (`/app/page.tsx`)
+With App Router, make sure to mark the component with `"use client"` and import AdStream normally:
+
+```tsx
+// app/demo/page.tsx
+"use client";
+
+import { AdStreamCarousel } from "adstream";
+import { Stack } from "@mui/material";
+
+export default function Demo() {
+  return (
+    <Stack spacing={2} maxWidth={600} margin="0 auto">
+      <AdStreamCarousel
+        zoneIds={[10, 17, 18]}
+        autoplay
+        autoplayInterval={3000}
+        sliderOptions={{
+          loop: false,
+          slides: { perView: 1, spacing: 12 },
+        }}
+        slotProps={{
+          ad: {
+            aspectRatio: "16 / 9",
+            boxShadow: 3,
+          },
+        }}
+      />
+    </Stack>
+  );
+}
+```
+
+---
+
 ### Using `useAdStream` with `AdComponent`
 
 If you prefer manual control or want a custom layout (instead of using `AdStreamCarousel`), you can use `useAdStream` along with `AdComponent` directly:
@@ -252,6 +370,8 @@ export default CustomLayout;
 
 ---
 
+## 🧠 Advanced
+
 ## 🎛️ Hooks & Utilities
 
 ### `useAdStream(zoneIds: number[])`
@@ -281,13 +401,18 @@ const ads = await fetchAds([6, 17, 18]);
 | Prop                                   | Type                        | Description                                                                                    |
 | -------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
 | `zoneIds`                              | `number[]`                  | List of ad zone IDs                                                                            |
+| `direction`                            | `"ltr"` \| `"rtl"`          | Optional layout direction override. If not provided, defaults to MUI theme direction.          |
 | `slotProps.ad`                         | `Partial<AdComponentProps>` | Customize individual ads inside the carousel (e.g. `height`, `aspectRatio`, `boxShadow`, etc.) |
 | `slotProps.navigation.arrowColor`      | `string`                    | Override left/right arrow color                                                                |
 | `slotProps.navigation.unselectedColor` | `string`                    | Inactive pagination dot color                                                                  |
 | `slotProps.navigation.selectedColor`   | `string`                    | Active pagination dot color                                                                    |
+| `slotProps.navigation.bgColor`         | `string`                    | Background color behind pagination dots                                                        |
 | `sliderOptions`                        | `KeenSliderOptions`         | Override Keen Slider behavior (e.g. `loop`, `slides.perView`, `spacing`, etc.)                 |
 | `autoplay`                             | `boolean`                   | Enable or disable autoplay                                                                     |
 | `autoplayInterval`                     | `number`                    | Interval in milliseconds for autoplay                                                          |
+| `slots.dots`                           | `ReactNode` or `function`   | Custom pagination dots. Can be a component or render function                                  |
+| `slots.navigation`                     | `ReactNode` or `function`   | Custom navigation arrows. Can be a component or render function                                |
+|                                        |
 
 ### AdStream Props
 
@@ -428,5 +553,75 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
   </body>
 </html>
 ```
+
+---
+
+## 📱 Use with Flutter WebView
+
+AdStream Web Components work in any mobile app that can render HTML — including **Flutter apps** using a WebView.
+
+### ✅ Example using `webview_flutter`
+
+Install the package:
+
+```bash
+flutter pub add webview_flutter
+```
+
+Then use the widget:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+class AdStreamWebView extends StatelessWidget {
+  final int zoneId;
+
+  const AdStreamWebView({super.key, required this.zoneId});
+
+  @override
+  Widget build(BuildContext context) {
+    final html = '''
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
+        <style>
+          html, body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            height: 100%;
+          }
+        </style>
+      </head>
+      <body>
+        <ad-stream
+          zone-id="$zoneId"
+          height='{"xs":"200px","md":"300px"}'
+          width="100%"
+          aspect-ratio="16 / 9"
+          box-shadow="2"
+          sx='{"borderRadius": 8, "backgroundColor":"#fafafa"}'
+        ></ad-stream>
+      </body>
+    </html>
+    ''';
+
+    return WebViewWidget(
+      controller: WebViewController()
+        ..loadHtmlString(html)
+        ..setJavaScriptMode(JavaScriptMode.unrestricted),
+    );
+  }
+}
+```
+
+✅ This can be used in both Android and iOS. Just be sure you:
+
+- Enable **JavaScript**
+- Set proper height on the WebView
+- Use `ad-stream-carousel` instead of `ad-stream` if you want rotating zones
 
 ---
