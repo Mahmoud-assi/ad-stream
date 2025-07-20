@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Skeleton, Box } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
+import { apiKey } from "./constants";
 
 export interface AdStreamPropsWithZone
   extends Omit<AdComponentProps, "htmlContent"> {
@@ -46,7 +47,7 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
           )}`,
           {
             body: JSON.stringify({
-              "X-API-KEY": process.env.API_KEY,
+              "X-API-KEY": apiKey,
             }),
             method: "POST",
           }

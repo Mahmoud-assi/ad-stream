@@ -1,6 +1,6 @@
 {
   "name": "adstream",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "description": "Add a stream of ads with Add-Stream.",
   "keywords": [
     "react",
@@ -58,7 +58,6 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^24.0.15",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "tsup": "^8.5.0",

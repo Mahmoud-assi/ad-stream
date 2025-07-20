@@ -23,7 +23,6 @@ export default defineConfig([
     globalName: "AdStreamComponent",
     define: {
       "process.env.NODE_ENV": JSON.stringify("production"),
-      "process.env.API_KEY": JSON.stringify(process.env.API_KEY),
     },
     bundle: true,
     minify: true,

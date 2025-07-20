@@ -1,3 +1,5 @@
+import { apiKey } from "./constants";
+
 // fetchAds.ts
 export default async function fetchAds(
   zoneIds: number[]
@@ -11,7 +13,7 @@ export default async function fetchAds(
           )}`,
           {
             body: JSON.stringify({
-              "X-API-KEY": process.env.API_KEY,
+              "X-API-KEY": apiKey,
             }),
             method: "POST",
           }
