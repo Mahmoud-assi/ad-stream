@@ -226,18 +226,6 @@ export default App;
 
 ### integration with Next.js, both for:
 
-✅ Pages Router (Next.js v12/v13)
-
-✅ App Router (Next.js 13+ with /app)
-
-It includes:
-
-- Dynamic import (next/dynamic)
-
-- ssr: false usage
-
----
-
 ✅ Pages Router (with SSR-safe dynamic import)
 Use `next/dynamic` to safely render AdStream client-side only:
 
@@ -370,8 +358,6 @@ export default CustomLayout;
 
 ---
 
-## 🧠 Advanced
-
 ## 🎛️ Hooks & Utilities
 
 ### `useAdStream(zoneIds: number[])`
@@ -398,6 +384,8 @@ const ads = await fetchAds([6, 17, 18]);
 
 ## 🎛️ Customization
 
+### AdStreamCarousel Props
+
 | Prop                                   | Type                        | Description                                                                                    |
 | -------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
 | `zoneIds`                              | `number[]`                  | List of ad zone IDs                                                                            |
@@ -413,6 +401,8 @@ const ads = await fetchAds([6, 17, 18]);
 | `slots.dots`                           | `ReactNode` or `function`   | Custom pagination dots. Can be a component or render function                                  |
 | `slots.navigation`                     | `ReactNode` or `function`   | Custom navigation arrows. Can be a component or render function                                |
 |                                        |
+
+---
 
 ### AdStream Props
 

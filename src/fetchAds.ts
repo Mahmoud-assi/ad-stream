@@ -8,7 +8,13 @@ export default async function fetchAds(
         const res = await fetch(
           `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
             Math.random() * 999999
-          )}`
+          )}`,
+          {
+            body: JSON.stringify({
+              "X-API-KEY": process.env.API_KEY,
+            }),
+            method: "POST",
+          }
         );
         const data = await res.text();
 
