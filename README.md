@@ -42,7 +42,7 @@ import { AdStreamCarousel } from "adstream";
 function App() {
   return (
     <div style={{ maxWidth: 600, margin: "0 auto" }}>
-      <AdStreamCarousel zoneIds={[6, 17, 18]} />
+      <AdStreamCarousel zoneIds={[100, 200, 300]} />
     </div>
   );
 }
@@ -135,7 +135,7 @@ export default function Demo() {
   return (
     <Box maxWidth={600} margin="0 auto">
       <AdStreamCarousel
-        zoneIds={[1, 2, 3]} // example ad zones
+        zoneIds={[100, 200, 300]} // example ad zones
         autoplay={true}
         autoplayInterval={3000}
         sliderOptions={{
@@ -194,7 +194,7 @@ import React from "react";
 import { AdStream } from "adstream";
 
 function App() {
-  return <AdStream zoneId={18} />;
+  return <AdStream zoneId={200} />;
 }
 
 export default App;
@@ -209,7 +209,7 @@ import { AdStream } from "adstream";
 function App() {
   return (
     <AdStream
-      zoneId={18}
+      zoneId={200}
       height={{ xs: 200, md: 300, lg: 400, xl: 500 }}
       width="100%"
       aspectRatio="4 / 3"
@@ -239,7 +239,7 @@ const SafeAdStreamWrapper = () => {
   const { colors } = useTheme();
   return (
     <AdStreamCarousel
-      zoneIds={[6, 17, 18]}
+      zoneIds={[100, 200, 300]}
       slotProps={{
         ad: {
           height: { xs: 200, md: 336 },
@@ -307,7 +307,7 @@ export default function Demo() {
   return (
     <Stack spacing={2} maxWidth={600} margin="0 auto">
       <AdStreamCarousel
-        zoneIds={[10, 17, 18]}
+        zoneIds={[100, 200, 300]}
         autoplay
         autoplayInterval={3000}
         sliderOptions={{
@@ -367,7 +367,7 @@ React hook that returns a list of ad HTML strings for given zone IDs.
 ```tsx
 import { useAdStream } from "adstream";
 
-const { ads, loading } = useAdStream([6, 17, 18]);
+const { ads, loading } = useAdStream([100, 200, 300]);
 ```
 
 ### `fetchAds(zoneIds: number[])`
@@ -377,7 +377,7 @@ Async utility function to fetch raw ad HTML strings (used internally by the hook
 ```ts
 import { fetchAds } from "adstream";
 
-const ads = await fetchAds([6, 17, 18]);
+const ads = await fetchAds([100, 200, 300]);
 ```
 
 ---
@@ -440,27 +440,31 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
     <div style="max-width: 600px; margin: 0 auto">
       <ad-stream-carousel
-        zone-ids="[18,17]"
-        slot-props='{ 
-          "ad": {
-            "height": {"xs": "250px", "md": "350px", "lg": "600px"},            
-            "aspectRatio": "16 / 9",
-            "boxShadow": 2,
-            "sx": {"borderRadius": 8},
-            "width": "100%"
-          },
-          "navigation": {
-            "arrowColor": "#FF5722",
-            "unselectedColor": "#ccc",
-            "selectedColor": "#FF5722"
-            "bgcolor":"#888"
+        zoneids="[100, 200, 300]"
+        slotprops='{
+        "ad": {
+          "aspectRatio": "600 / 336",
+          "height": {"xs": 200, "sm": 225, "md": 275, "lg": 336},
+          "width": "100%",
+          "boxShadow": 2,
+          "sx": {"borderRadius": 2}
+        },
+        "navigation": {
+          "bgColor": "rgba(0,0,0,0.2)",
+          "selectedColor": "primary.main",
+          "unselectedColor": "grey.300",
+          "arrowColor": "blue"
           }
         }'
-        slider-options='{ "loop": true, "slides": {"perView": 1, "spacing": 10} }'
-        autoplay
-        autoplay-interval="5000"
-      >
-      </ad-stream-carousel>
+        slideroptions='{
+          "initial": 0,
+          "loop": true,
+          "slides": {"perView": 1, "spacing": 10}
+        }'
+        autoplay="true"
+        autoplayinterval="4000"
+        direction="ltr"
+      ></ad-stream-carousel>
     </div>
   </body>
 </html>
@@ -479,10 +483,10 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
     <script src="https://unpkg.com/adstream/dist/browser/web-component.global.js"></script>
     <div style="max-width: 600px; margin: 0 auto">
       <ad-stream
-        zone-id="17"
-        height='{"xs":"200px","md":"300px"}'
+        zoneid="200"
+        aspectratio="16 / 9"
+        height='{"xs": 200, "md": 300}'
         width="100%"
-        aspect-ratio="4 / 3"
         box-shadow="2"
         sx='{"borderRadius":3,"backgroundColor":"#fafafa"}'
         error-text="Oops! Could not load the ad."
@@ -522,10 +526,10 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
         <!-- Wrapper for slides -->
         <div class="carousel-inner">
           <div class="item active">
-            <ad-stream zone-id="18"></ad-stream>
+            <ad-stream zoneid="100"></ad-stream>
           </div>
           <div class="item">
-            <ad-stream zone-id="17"></ad-stream>
+            <ad-stream zoneid="200"></ad-stream>
           </div>
         </div>
 
@@ -588,12 +592,11 @@ class AdStreamWebView extends StatelessWidget {
       </head>
       <body>
         <ad-stream
-          zone-id="$zoneId"
-          height='{"xs":"200px","md":"300px"}'
-          width="100%"
-          aspect-ratio="16 / 9"
-          box-shadow="2"
-          sx='{"borderRadius": 8, "backgroundColor":"#fafafa"}'
+        zoneid="200"
+        aspectratio="16 / 9"
+        height='{"xs": 200, "md": 300}'
+        width="100%"
+        sx='{"borderRadius": 1}'
         ></ad-stream>
       </body>
     </html>
