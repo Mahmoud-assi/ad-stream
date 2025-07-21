@@ -16,7 +16,6 @@ const AddStreamElement = reactToWebComponent(AdStream, React, ReactDOMClient, {
     boxShadow: "number",
     sx: "json",
     errorText: "string",
-    adstreamKey: "string",
   },
 });
 customElements.define("ad-stream", AddStreamElement);
@@ -35,7 +34,6 @@ const CarouselElement = reactToWebComponent(
       autoplay: "boolean",
       autoplayInterval: "number",
       direction: "string",
-      adstreamKey: "string",
     },
   }
 );
