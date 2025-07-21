@@ -1,21 +1,27 @@
-import { apiKey } from "./constants";
-
 // fetchAds.ts
+import { HmacSHA256 } from "crypto-js";
+import hex from "crypto-js/enc-hex";
+
 export default async function fetchAds(
-  zoneIds: number[]
+  zoneIds: number[],
+  key: string
 ): Promise<(string | null)[]> {
   return await Promise.all(
     zoneIds.map(async (zoneId) => {
       try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const message = `timestamp=${timestamp}`;
+        const signature = HmacSHA256(message, key).toString(hex);
         const res = await fetch(
           `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
             Math.random() * 999999
           )}`,
           {
-            body: JSON.stringify({
-              "X-API-KEY": apiKey,
-            }),
-            method: "POST",
+            method: "GET",
+            headers: {
+              signature: signature,
+              timestamp: String(timestamp),
+            },
           }
         );
         const data = await res.text();

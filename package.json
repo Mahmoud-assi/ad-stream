@@ -1,6 +1,6 @@
 {
   "name": "adstream",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Add a stream of ads with Add-Stream.",
   "keywords": [
     "react",
@@ -42,6 +42,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^5.18.0",
+    "crypto-js": "^4.2.0",
     "keen-slider": "^6.8.6",
     "react-to-webcomponent": "^2.0.1"
   },
@@ -58,6 +59,7 @@
     }
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "tsup": "^8.5.0",

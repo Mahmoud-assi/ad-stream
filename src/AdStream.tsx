@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Skeleton, Box } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
-import { apiKey } from "./constants";
+import { HmacSHA256 } from "crypto-js";
+import hex from "crypto-js/enc-hex";
 
 export interface AdStreamPropsWithZone
   extends Omit<AdComponentProps, "htmlContent"> {
@@ -9,6 +10,12 @@ export interface AdStreamPropsWithZone
    * The zone ID used to fetch the ad HTML.
    */
   zoneId: number;
+
+  /**
+   * Secret key provided by Add-Stream team for API authentication.
+   * Contact Add-Stream support to obtain your key.
+   */
+  key: string;
 
   /**
    * Optional custom loading component instead of Skeleton.
@@ -27,13 +34,14 @@ export interface AdStreamPropsWithZone
  */
 const AdStream: React.FC<AdStreamPropsWithZone> = ({
   zoneId,
+  key,
   loader,
   aspectRatio = "600 / 336",
   height = { xs: 200, sm: 225, md: 275, lg: 336 },
   width = "100%",
   boxShadow = 1,
   errorText = "Failed to load ad.",
-  sx = { borderRadius: 2 },
+  sx = { borderRadius: 1 },
 }) => {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [error, setError] = useState(false);
@@ -41,15 +49,19 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
   useEffect(() => {
     const fetchAd = async () => {
       try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const message = `timestamp=${timestamp}`;
+        const signature = HmacSHA256(message, key).toString(hex);
         const res = await fetch(
           `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
             Math.random() * 999999
           )}`,
           {
-            body: JSON.stringify({
-              "X-API-KEY": apiKey,
-            }),
-            method: "POST",
+            method: "GET",
+            headers: {
+              signature: signature,
+              timestamp: String(timestamp),
+            },
           }
         );
         const data = await res.text();
