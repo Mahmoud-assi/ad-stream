@@ -214,7 +214,7 @@ function App() {
       width="100%"
       aspectRatio="4 / 3"
       boxShadow={4}
-      sx={{ borderRadius: 12, backgroundColor: "#fafafa", p: 2 }}
+      sx={{ borderRadius: 12, backgroundColor: "#fafafa" }}
       loader={<div>Loading single ad...</div>}
       errorText={<div>Oops! Could not load the ad.</div>}
     />

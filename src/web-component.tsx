@@ -2,46 +2,15 @@
 import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import reactToWebComponent from "react-to-webcomponent";
-import AdStreamCarousel from "./AdStreamCarousel";
 import AdComponent from "./AdComponent";
 import { AdStreamElement } from "./ad-stream-element";
+import { AdStreamCarouselElement } from "./ad-stream-carousel-element";
 
-// // Define <ad-stream>
-// const AddStreamElement = reactToWebComponent(AdStream, React, ReactDOMClient, {
-//   props: {
-//     zoneId: "number",
-//     aspectRatio: "string",
-//     height: "json",
-//     width: "string",
-//     boxShadow: "number",
-//     sx: "json",
-//     errorText: "string",
-//     // adstreamKey: "string",
-//   },
-// });
-// customElements.define("ad-stream", AddStreamElement);
-
+// Define <ad-stream>
 customElements.define("ad-stream", AdStreamElement);
 
 // Define <ad-stream-carousel>
-const CarouselElement = reactToWebComponent(
-  AdStreamCarousel,
-  React,
-  ReactDOMClient,
-  {
-    props: {
-      zoneIds: "json", // Required
-      slotProps: "json", // Pass nested ad props, nav colors
-      slots: "json", // Optional custom elements
-      sliderOptions: "json",
-      autoplay: "boolean",
-      autoplayInterval: "number",
-      direction: "string",
-      // adstreamKey: "string",
-    },
-  }
-);
-customElements.define("ad-stream-carousel", CarouselElement);
+customElements.define("ad-stream-carousel", AdStreamCarouselElement);
 
 // Define <ad-component>
 const AdComponentElement = reactToWebComponent(
