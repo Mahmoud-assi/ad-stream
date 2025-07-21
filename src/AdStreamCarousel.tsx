@@ -186,7 +186,6 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   // Total number of slides available
   const totalSlides = instanceRef.current?.track?.details?.slides?.length ?? 0;
 
-  if (!adstreamKey) return null;
   return (
     <Stack position="relative">
       <InjectKeenSliderStyles />
