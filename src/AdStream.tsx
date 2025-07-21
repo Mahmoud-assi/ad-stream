@@ -12,6 +12,12 @@ export interface AdStreamPropsWithZone
   zoneId: number;
 
   /**
+   * Secret key provided by Add-Stream team for API authentication.
+   * Contact Add-Stream support to obtain your key.
+   */
+  adstreamKey: string;
+
+  /**
    * Optional custom loading component instead of Skeleton.
    */
   loader?: React.ReactNode;
@@ -28,6 +34,7 @@ export interface AdStreamPropsWithZone
  */
 const AdStream: React.FC<AdStreamPropsWithZone> = ({
   zoneId,
+  adstreamKey,
   loader,
   aspectRatio = "600 / 336",
   height = { xs: 200, sm: 225, md: 275, lg: 336 },
@@ -44,10 +51,7 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
       try {
         const timestamp = Math.floor(Date.now() / 1000);
         const message = `timestamp=${timestamp}`;
-        const signature = HmacSHA256(
-          message,
-          process.env.ADSTREAM_SECRET_KEY!
-        ).toString(hex);
+        const signature = HmacSHA256(message, adstreamKey).toString(hex);
         const res = await fetch(
           `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
             Math.random() * 999999

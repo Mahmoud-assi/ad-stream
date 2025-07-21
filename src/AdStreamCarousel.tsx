@@ -17,6 +17,12 @@ export interface AdStreamCarouselProps {
   zoneIds: number[];
 
   /**
+   * Secret key provided by Add-Stream team for API authentication.
+   * Contact Add-Stream support to obtain your key.
+   */
+  adstreamKey: string;
+
+  /**
    * Props to customize inner components and styles
    */
   slotProps?: {
@@ -120,6 +126,7 @@ const defaultSliderOptions: KeenSliderOptions = {
 
 const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   zoneIds,
+  adstreamKey,
   slotProps = {},
   sliderOptions = {},
   autoplay = true,
@@ -160,7 +167,7 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   );
 
   // Fetch ads for given zone IDs
-  const { ads, loading } = useAdStream(zoneIds);
+  const { ads, loading } = useAdStream(zoneIds, adstreamKey);
   // Initialize Keen Slider hook
   const [sliderRef, instanceRef] =
     useKeenSlider<HTMLDivElement>(mergedSliderOptions);
