@@ -87,6 +87,7 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
     fetchAd();
   }, [zoneId]);
 
+  if (!adstreamKey) return null;
   if (error) {
     return (
       <Box
