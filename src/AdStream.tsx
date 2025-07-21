@@ -34,13 +34,15 @@ export interface AdStreamPropsWithZone
   errorText?: React.ReactNode;
 }
 
+// Methods exposed via `ref`
+export interface AdStreamRef {
+  setAdstreamKey: (key: string) => void;
+}
+
 /**
  * Single Ad with Zone ID
  */
-const AdStream: React.FC<AdStreamPropsWithZone> = forwardRef<
-  any,
-  AdStreamPropsWithZone
->(
+const AdStream = forwardRef<AdStreamRef, AdStreamPropsWithZone>(
   (
     {
       zoneId,
@@ -59,20 +61,20 @@ const AdStream: React.FC<AdStreamPropsWithZone> = forwardRef<
     const [error, setError] = useState(false);
     const [key, setKey] = useState<string | undefined>(adstreamKey);
 
-    // ✅ allow external JS to call `setAdstreamKey(...)`
+    // ✅ Expose setAdstreamKey via ref
     useImperativeHandle(ref, () => ({
-      setAdstreamKey: (newKey: string) => {
-        setKey(newKey);
-      },
+      setAdstreamKey: (newKey: string) => setKey(newKey),
     }));
 
     useEffect(() => {
       if (!key) return;
+
       const fetchAd = async () => {
         try {
           const timestamp = Math.floor(Date.now() / 1000);
-          const message = `timestamp=${timestamp}`;
-          const signature = HmacSHA256(message, key!).toString(hex);
+          const signature = HmacSHA256(`timestamp=${timestamp}`, key).toString(
+            hex
+          );
           const res = await fetch(
             `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
               Math.random() * 999999
@@ -80,24 +82,25 @@ const AdStream: React.FC<AdStreamPropsWithZone> = forwardRef<
             {
               method: "GET",
               headers: {
-                signature: signature,
+                signature,
                 timestamp: String(timestamp),
               },
             }
           );
           const data = await res.text();
+
           const fullHTML = `
-          <html>
-            <head>
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <style>
-                body { margin: 0; padding: 0; overflow: hidden; }
-                img { width: 100%; height: 100%; object-fit: fill; }
-              </style>
-            </head>
-            <body>${data}</body>
-          </html>
-        `;
+            <html>
+              <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <style>
+                  body { margin: 0; padding: 0; overflow: hidden; }
+                  img { width: 100%; height: 100%; object-fit: fill; }
+                </style>
+              </head>
+              <body>${data}</body>
+            </html>
+          `;
           setHtmlContent(fullHTML);
         } catch (err) {
           console.error("Failed to fetch ad for zone", zoneId, err);
@@ -108,7 +111,6 @@ const AdStream: React.FC<AdStreamPropsWithZone> = forwardRef<
       fetchAd();
     }, [zoneId, key]);
 
-    if (!adstreamKey) return null;
     if (error) {
       return (
         <Box
