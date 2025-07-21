@@ -2,24 +2,88 @@
 import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 import reactToWebComponent from "react-to-webcomponent";
-import AdStream from "./AdStream";
+import AdStream, { AdStreamPropsWithZone } from "./AdStream";
 import AdStreamCarousel from "./AdStreamCarousel";
 import AdComponent from "./AdComponent";
 
-// Define <ad-stream>
-const AddStreamElement = reactToWebComponent(AdStream, React, ReactDOMClient, {
-  props: {
-    zoneId: "number",
-    aspectRatio: "string",
-    height: "json",
-    width: "string",
-    boxShadow: "number",
-    sx: "json",
-    errorText: "string",
-    // adstreamKey: "string",
-  },
-});
-customElements.define("ad-stream", AddStreamElement);
+// // Define <ad-stream>
+// const AddStreamElement = reactToWebComponent(AdStream, React, ReactDOMClient, {
+//   props: {
+//     zoneId: "number",
+//     aspectRatio: "string",
+//     height: "json",
+//     width: "string",
+//     boxShadow: "number",
+//     sx: "json",
+//     errorText: "string",
+//     // adstreamKey: "string",
+//   },
+// });
+// customElements.define("ad-stream", AddStreamElement);
+
+// 🛠 Cast to allow refs
+const AdStreamWithRef = AdStream as React.ForwardRefExoticComponent<
+  AdStreamPropsWithZone & React.RefAttributes<any>
+>;
+
+class AdStreamElement extends HTMLElement {
+  private ref = React.createRef<any>();
+
+  connectedCallback() {
+    // Parse and validate zoneId
+    const zoneIdAttr = this.getAttribute("zoneid");
+    if (!zoneIdAttr) {
+      console.error("Missing required attribute: zoneid");
+      return;
+    }
+
+    const zoneId = parseInt(zoneIdAttr, 10);
+    if (isNaN(zoneId)) {
+      console.error("Invalid zoneid");
+      return;
+    }
+
+    const props: AdStreamPropsWithZone = {
+      zoneId,
+      adstreamKey: "", // initially empty, to be set later via setter
+      aspectRatio: this.getAttribute("aspectratio") ?? "600 / 336",
+      height: this.parseJsonAttribute("height"),
+      width: this.getAttribute("width") ?? "100%",
+      boxShadow: Number(this.getAttribute("boxshadow") ?? "1"),
+      sx: this.parseJsonAttribute("sx"),
+      errorText: this.getAttribute("errortext") ?? "Failed to load ad.",
+    };
+
+    const element = React.createElement(AdStreamWithRef, {
+      ...props,
+      ref: this.ref,
+    });
+
+    const root = ReactDOMClient.createRoot(this);
+    root.render(element);
+  }
+
+  setAdstreamKey(key: string) {
+    if (this.ref.current?.setAdstreamKey) {
+      this.ref.current.setAdstreamKey(key);
+    } else {
+      console.warn("AdStream component not ready yet.");
+    }
+  }
+
+  private parseJsonAttribute(attrName: string): any {
+    const val = this.getAttribute(attrName);
+    if (!val) return undefined;
+    try {
+      return JSON.parse(val);
+    } catch {
+      console.warn(`Invalid JSON for attribute '${attrName}':`, val);
+      return undefined;
+    }
+  }
+}
+
+customElements.define("ad-stream", AdStreamElement);
 
 // Define <ad-stream-carousel>
 const CarouselElement = reactToWebComponent(

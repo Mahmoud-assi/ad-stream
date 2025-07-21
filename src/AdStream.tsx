@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import { Skeleton, Box } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
 import { HmacSHA256 } from "crypto-js";
@@ -32,40 +37,56 @@ export interface AdStreamPropsWithZone
 /**
  * Single Ad with Zone ID
  */
-const AdStream: React.FC<AdStreamPropsWithZone> = ({
-  zoneId,
-  adstreamKey,
-  loader,
-  aspectRatio = "600 / 336",
-  height = { xs: 200, sm: 225, md: 275, lg: 336 },
-  width = "100%",
-  boxShadow = 1,
-  errorText = "Failed to load ad.",
-  sx = { borderRadius: 1 },
-}) => {
-  const [htmlContent, setHtmlContent] = useState<string | null>(null);
-  const [error, setError] = useState(false);
+const AdStream: React.FC<AdStreamPropsWithZone> = forwardRef<
+  any,
+  AdStreamPropsWithZone
+>(
+  (
+    {
+      zoneId,
+      adstreamKey,
+      loader,
+      aspectRatio = "600 / 336",
+      height = { xs: 200, sm: 225, md: 275, lg: 336 },
+      width = "100%",
+      boxShadow = 1,
+      errorText = "Failed to load ad.",
+      sx = { borderRadius: 1 },
+    },
+    ref
+  ) => {
+    const [htmlContent, setHtmlContent] = useState<string | null>(null);
+    const [error, setError] = useState(false);
+    const [key, setKey] = useState<string | undefined>(adstreamKey);
 
-  useEffect(() => {
-    const fetchAd = async () => {
-      try {
-        const timestamp = Math.floor(Date.now() / 1000);
-        const message = `timestamp=${timestamp}`;
-        const signature = HmacSHA256(message, adstreamKey).toString(hex);
-        const res = await fetch(
-          `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
-            Math.random() * 999999
-          )}`,
-          {
-            method: "GET",
-            headers: {
-              signature: signature,
-              timestamp: String(timestamp),
-            },
-          }
-        );
-        const data = await res.text();
-        const fullHTML = `
+    // ✅ allow external JS to call `setAdstreamKey(...)`
+    useImperativeHandle(ref, () => ({
+      setAdstreamKey: (newKey: string) => {
+        setKey(newKey);
+      },
+    }));
+
+    useEffect(() => {
+      if (!key) return;
+      const fetchAd = async () => {
+        try {
+          const timestamp = Math.floor(Date.now() / 1000);
+          const message = `timestamp=${timestamp}`;
+          const signature = HmacSHA256(message, key!).toString(hex);
+          const res = await fetch(
+            `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
+              Math.random() * 999999
+            )}`,
+            {
+              method: "GET",
+              headers: {
+                signature: signature,
+                timestamp: String(timestamp),
+              },
+            }
+          );
+          const data = await res.text();
+          const fullHTML = `
           <html>
             <head>
               <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -77,63 +98,64 @@ const AdStream: React.FC<AdStreamPropsWithZone> = ({
             <body>${data}</body>
           </html>
         `;
-        setHtmlContent(fullHTML);
-      } catch (err) {
-        console.error("Failed to fetch ad for zone", zoneId, err);
-        setError(true);
-      }
-    };
+          setHtmlContent(fullHTML);
+        } catch (err) {
+          console.error("Failed to fetch ad for zone", zoneId, err);
+          setError(true);
+        }
+      };
 
-    fetchAd();
-  }, [zoneId]);
+      fetchAd();
+    }, [zoneId, key]);
 
-  if (!adstreamKey) return null;
-  if (error) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height,
-          width,
-          boxShadow,
-          bgcolor: "grey.100",
-          ...sx,
-        }}
-      >
-        {errorText}
-      </Box>
-    );
-  }
-
-  if (!htmlContent) {
-    return (
-      loader || (
-        <Skeleton
-          variant="rectangular"
+    if (!adstreamKey) return null;
+    if (error) {
+      return (
+        <Box
           sx={{
-            aspectRatio,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             height,
             width,
             boxShadow,
+            bgcolor: "grey.100",
             ...sx,
           }}
-        />
-      )
+        >
+          {errorText}
+        </Box>
+      );
+    }
+
+    if (!htmlContent) {
+      return (
+        loader || (
+          <Skeleton
+            variant="rectangular"
+            sx={{
+              aspectRatio,
+              height,
+              width,
+              boxShadow,
+              ...sx,
+            }}
+          />
+        )
+      );
+    }
+
+    return (
+      <AdComponent
+        aspectRatio={aspectRatio}
+        boxShadow={boxShadow}
+        width={width}
+        height={height}
+        sx={{ ...sx }}
+        htmlContent={htmlContent}
+      />
     );
   }
-
-  return (
-    <AdComponent
-      aspectRatio={aspectRatio}
-      boxShadow={boxShadow}
-      width={width}
-      height={height}
-      sx={{ ...sx }}
-      htmlContent={htmlContent}
-    />
-  );
-};
+);
 
 export default AdStream;
