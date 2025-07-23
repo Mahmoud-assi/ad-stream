@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useKeenSlider } from "keen-slider/react.js";
-import { Box, Skeleton, Stack, useTheme } from "@mui/material";
+import { Box, Skeleton, Stack, SxProps, Theme, useTheme } from "@mui/material";
 import AdComponent, { AdComponentProps } from "./AdComponent";
 import useAdStream from "./useAdStream";
 import { KeenSliderOptions } from "keen-slider";
@@ -26,6 +26,16 @@ export interface AdStreamCarouselProps {
    * Props to customize inner components and styles
    */
   slotProps?: {
+    /**
+     * MUI `sx` prop override for the outer wrapper `<Stack>`
+     */
+    wrapper?: SxProps<Theme>;
+
+    /**
+     * MUI `sx` prop override for the default `<Steps />` dots wrapper
+     */
+    steps?: SxProps<Theme>;
+
     /**
      * Props passed to <AdComponent />
      */
@@ -134,7 +144,12 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   slots = {},
   direction,
 }) => {
-  const { ad: adProps = {}, navigation = {} } = slotProps;
+  const {
+    ad: adProps = {},
+    navigation = {},
+    wrapper: wrapperSx,
+    steps: stepsSx,
+  } = slotProps;
   const mergedAdProps = { ...defaultAdProps, ...adProps };
   const navColors = { ...defaultNavColors, ...navigation };
   const theme = useTheme();
@@ -187,7 +202,7 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
   const totalSlides = instanceRef.current?.track?.details?.slides?.length ?? 0;
 
   return (
-    <Stack position="relative">
+    <Stack position="relative" sx={{ ...wrapperSx }}>
       <InjectKeenSliderStyles />
       {loading ? (
         // Show skeleton loader while ads are loading
@@ -283,6 +298,7 @@ const AdStreamCarousel: React.FC<AdStreamCarouselProps> = ({
               selectedColor={navColors?.selectedColor}
               unselectedColor={navColors?.unselectedColor}
               bgColor={navColors?.bgColor}
+              sx={{ ...stepsSx }}
             />
           )}
         </>

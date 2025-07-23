@@ -1,4 +1,4 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, SxProps, Theme } from "@mui/material";
 
 /**
  * Props for the Steps indicator component.
@@ -34,7 +34,8 @@ export default function Steps({
   bgColor = "rgba(0,0,0,0.125)",
   selectedColor = "primary.main",
   unselectedColor = "grey.500",
-}: StepsProps) {
+  sx,
+}: StepsProps & { sx: SxProps<Theme> }) {
   return (
     <Stack
       direction="row"
@@ -51,6 +52,7 @@ export default function Steps({
         px: 1,
         py: 0.5,
         backdropFilter: "blur(4px)",
+        ...sx,
       }}
     >
       {Array.from({ length: steps }).map((_, idx) => {

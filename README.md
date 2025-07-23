@@ -455,7 +455,9 @@ You can use `adstream` in any HTML file by loading the built-in Web Component.
           "unselectedColor": "grey.300",
           "arrowColor": "blue"
           }
-        }'
+        },
+        "wrapper": { "px": 2, "py": 3 },
+        "steps": { "mt": 2 }'
         slideroptions='{
           "initial": 0,
           "loop": true,

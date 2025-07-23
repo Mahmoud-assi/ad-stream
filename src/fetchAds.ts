@@ -1,6 +1,5 @@
 // fetchAds.ts
-import { HmacSHA256 } from "crypto-js";
-import hex from "crypto-js/enc-hex";
+import CryptoJS from "crypto-js";
 
 export default async function fetchAds(
   zoneIds: number[],
@@ -11,7 +10,9 @@ export default async function fetchAds(
       try {
         const timestamp = Math.floor(Date.now() / 1000);
         const message = `timestamp=${timestamp}`;
-        const signature = HmacSHA256(message, key).toString(hex);
+        const signature = CryptoJS.HmacSHA256(message, key).toString(
+          CryptoJS.enc.Hex
+        );
         const res = await fetch(
           `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
             Math.random() * 999999
