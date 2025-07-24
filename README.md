@@ -366,8 +366,8 @@ React hook that returns a list of ad HTML strings for given zone IDs.
 
 ```tsx
 import { useAdStream } from "adstream";
-
-const { ads, loading } = useAdStream([100, 200, 300]);
+const zoneIds = useMemo(() => [100, 200, 300], []);
+const { ads, loading } = useAdStream(zoneIds);
 ```
 
 ### `fetchAds(zoneIds: number[])`

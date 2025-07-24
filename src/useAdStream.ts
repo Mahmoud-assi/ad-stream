@@ -7,7 +7,7 @@ const useAdStream = (zoneIds: number[], key: string) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!key) return;
+    if (!key || !Array.isArray(zoneIds) || zoneIds.length === 0) return;
     const fetch = async () => {
       setLoading(true);
       const results = await fetchAds(zoneIds, key);
