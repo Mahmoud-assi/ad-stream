@@ -6,8 +6,7 @@ import React, {
 } from "react";
 import { Skeleton, Box } from "@mui/material";
 import AdComponent, { type AdComponentProps } from "./AdComponent";
-import { HmacSHA256 } from "crypto-js";
-import hex from "crypto-js/enc-hex";
+import CryptoJS from "crypto-js";
 
 export interface AdStreamPropsWithZone
   extends Omit<AdComponentProps, "htmlContent"> {
@@ -72,9 +71,10 @@ const AdStream = forwardRef<AdStreamRef, AdStreamPropsWithZone>(
       const fetchAd = async () => {
         try {
           const timestamp = Math.floor(Date.now() / 1000);
-          const signature = HmacSHA256(`timestamp=${timestamp}`, key).toString(
-            hex
-          );
+          const signature = CryptoJS.HmacSHA256(
+            `timestamp=${timestamp}`,
+            key
+          ).toString(CryptoJS.enc.Hex);
           const res = await fetch(
             `https://addstream.net/www/delivery/afr.php?zoneid=${zoneId}&cb=${Math.floor(
               Math.random() * 999999
