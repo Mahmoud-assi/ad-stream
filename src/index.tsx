@@ -6,4 +6,8 @@ export { default as useAdStream } from "./useAdStream";
 export { default as fetchAds } from "./fetchAds";
 
 // Register the Web Components (side effect)
-import "./web-component";
+// import "./web-component";
+// Only import web-component if in browser (avoids SSR crash)
+if (typeof window !== "undefined") {
+  import("./web-component");
+}
